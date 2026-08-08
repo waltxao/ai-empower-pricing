@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>智能化赋能服务报价 | AI驱动开发</title>
+<style>
+:root {
+  --purple-dark: #000000;
+  --purple-light: #333333;
+  --purple-hover: #F5F5F5;
+  --green: #FFCC00;
+  --green-dark: #E6B800;
+  --orange: #FFCC00;
+  --bg-gray: #F8F9FA;
+  --bg-white: #FFFFFF;
+  --text-dark: #1A1A1A;
+  --text-gray: #7F8C8D;
+  --border-gray: #E0E0E0;
+  --shadow: 0 2px 12px rgba(0,0,0,0.08);
+  --shadow-lg: 0 8px 30px rgba(0,0,0,0.12);
+  --radius: 8px;
+  --radius-lg: 16px;
+  --font-main: 'Noto Sans CJK SC', 'Microsoft YaHei', 'PingFang SC', sans-serif;
+  --font-mono: 'Segoe UI', 'Roboto Mono', monospace;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: var(--font-main); background: var(--bg-gray); color: var(--text-dark); line-height: 1.6; font-size: 15px; }
+a { text-decoration: none; color: inherit; }
+
+/* 导航栏 */
+.navbar {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(0,0,0,0.97); backdrop-filter: blur(10px);
+  padding: 0 40px; height: 56px;
+  display: flex; align-items: center; justify-content: space-between;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+.nav-logo { color: #fff; font-size: 18px; font-weight: 700; letter-spacing: 1px; }
+.nav-logo span { color: var(--green); }
+.nav-links { display: flex; gap: 8px; }
+.nav-links a {
+  color: rgba(255,255,255,0.8); font-size: 14px;
+  padding: 6px 14px; border-radius: 6px; transition: all 0.2s;
+}
+.nav-links a:hover { color: #fff; background: rgba(255,255,255,0.15); }
+
+/* Hero区域 */
+.hero {
+  background: linear-gradient(135deg, #000000 0%, #1A1A1A 50%, #000000 100%);
+  padding: 60px 40px 50px; text-align: center; color: #fff;
+  position: relative; overflow: hidden;
+}
+.hero::before {
+  content: ''; position: absolute; top: -50%; right: -10%;
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(255,204,0,0.15), transparent 70%);
+  border-radius: 50%;
+}
+.hero h1 { font-size: 36px; font-weight: 700; margin-bottom: 10px; position: relative; }
+.hero p { font-size: 16px; opacity: 0.85; margin-bottom: 30px; position: relative; }
+.hero-cards { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; position: relative; }
+.hero-card {
+  background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2);
+  border-radius: var(--radius); padding: 18px 28px; min-width: 180px; backdrop-filter: blur(5px);
+}
+.hero-card .label { font-size: 12px; opacity: 0.7; margin-bottom: 4px; }
+.hero-card .value { font-size: 20px; font-weight: 700; }
+.hero-card .value small { font-size: 13px; font-weight: 400; opacity: 0.8; }
+
+/* 服务流程 */
+.flow-section { padding: 40px 0 20px; }
+.flow-wrap { display: flex; align-items: center; justify-content: center; gap: 0; flex-wrap: wrap; }
+.flow-step {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  background: #fff; border: 2px solid var(--border-gray); border-radius: var(--radius-lg);
+  padding: 20px 24px; min-width: 140px; position: relative; transition: all 0.3s;
+}
+.flow-step:hover { border-color: var(--green); box-shadow: var(--shadow); transform: translateY(-2px); }
+.flow-step-num {
+  width: 28px; height: 28px; border-radius: 50%; background: var(--purple-dark); color: var(--green);
+  display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; font-family: var(--font-mono);
+}
+.flow-step-title { font-size: 15px; font-weight: 600; color: var(--text-dark); }
+.flow-step-desc { font-size: 12px; color: var(--text-gray); text-align: center; line-height: 1.4; }
+.flow-arrow {
+  font-size: 24px; color: var(--purple-dark); padding: 0 6px;
+  display: flex; align-items: center; opacity: 0.4;
+}
+@media (max-width: 768px) {
+  .flow-wrap { flex-direction: column; gap: 8px; }
+  .flow-arrow { transform: rotate(90deg); padding: 4px 0; }
+  .flow-step { min-width: 200px; width: 80%; }
+}
+
+/* 通用容器 */
+.container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+.section-title {
+  font-size: 24px; font-weight: 700; color: var(--purple-dark);
+  margin-bottom: 6px; padding-left: 14px; border-left: 4px solid var(--green);
+}
+.section-desc { font-size: 14px; color: var(--text-gray); margin-bottom: 20px; padding-left: 18px; }
+
+/* Tab切换栏 */
+.tab-section { padding: 40px 0 0; }
+.tab-bar { display: flex; gap: 4px; margin-bottom: 0; border-bottom: 3px solid var(--border-gray); }
+.tab-btn {
+  padding: 12px 28px; font-size: 15px; font-weight: 600;
+  background: transparent; border: none; cursor: pointer;
+  color: var(--text-gray); border-bottom: 3px solid transparent;
+  margin-bottom: -3px; transition: all 0.25s; font-family: var(--font-main);
+  border-radius: 6px 6px 0 0;
+}
+.tab-btn:hover { color: var(--purple-light); background: var(--purple-hover); }
+.tab-btn.active { color: #fff; background: var(--purple-dark); border-bottom-color: var(--green); }
+
+/* 报价表 */
+.pricing-section { padding: 20px 0 40px; }
+.pricing-table-wrap {
+  background: #fff; border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  box-shadow: var(--shadow); overflow: hidden;
+}
+.pricing-table { width: 100%; border-collapse: collapse; }
+.pricing-table thead { background: var(--purple-dark); }
+.pricing-table th {
+  color: #fff; font-size: 13px; font-weight: 600;
+  padding: 14px 12px; text-align: left; white-space: nowrap;
+}
+.pricing-table th:first-child { text-align: center; width: 50px; }
+.pricing-table th.col-cat2 { width: 120px; }
+.pricing-table th.col-name { width: 140px; }
+.pricing-table th.col-desc { min-width: 200px; }
+.pricing-table th.col-price { width: 170px; text-align: center; }
+.pricing-table tbody tr { border-bottom: 1px solid var(--border-gray); cursor: pointer; transition: background 0.15s; }
+.pricing-table tbody tr:hover { background: var(--purple-hover); }
+.pricing-table tbody tr:nth-child(even) { background: #FAFAFA; }
+.pricing-table tbody tr:nth-child(even):hover { background: var(--purple-hover); }
+.pricing-table td { padding: 12px; font-size: 14px; vertical-align: top; }
+.pricing-table td:first-child { text-align: center; font-family: var(--font-mono); font-weight: 600; color: var(--purple-light); }
+.cat2-tag {
+  display: inline-block; background: var(--purple-hover); color: var(--purple-dark);
+  font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 4px; white-space: nowrap;
+}
+.mode-badge {
+  display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 600;
+  margin-bottom: 4px;
+}
+.mode-badge.a { background: #F5F5F5; color: #333333; }
+.mode-badge.b { background: #FFF8E1; color: #B8860B; }
+.mode-badge.c { background: #FFCC00; color: #000000; }
+.item-name { font-weight: 600; color: var(--text-dark); }
+.item-desc { font-size: 13px; color: var(--text-gray); line-height: 1.5; }
+.price-cell { text-align: center; font-family: var(--font-mono); }
+.price-formula { color: var(--purple-light); font-size: 14px; font-weight: 600; }
+.price-formula .coin-unit { color: var(--text-gray); font-size: 11px; font-weight: 400; }
+.price-na { color: var(--text-gray); font-size: 18px; }
+.pay-tag {
+  display: inline-block; background: var(--green); color: #000;
+  font-size: 11px; padding: 2px 8px; border-radius: 10px; margin-top: 4px;
+}
+.price-free {
+  display: inline-block; background: var(--green); color: #000;
+  font-size: 13px; font-weight: 700; padding: 4px 12px; border-radius: 12px;
+}
+.price-orig { text-decoration: line-through; color: var(--text-gray); font-size: 11px; opacity: 0.5; display: block; line-height: 1.3; }
+.price-now { color: var(--purple-dark); font-size: 14px; font-weight: 600; display: block; }
+.discount-tag { display: inline-block; background: var(--green); color: #000; font-size: 10px; padding: 1px 6px; border-radius: 8px; font-weight: 600; margin-right: 4px; }
+.flow-step-note { font-size: 11px; color: var(--green-dark); font-weight: 600; margin-top: 2px; }
+.detail-row { display: none; }
+.detail-row.open { display: table-row; }
+.detail-row td { background: #F8F8F8; padding: 16px 20px; border-bottom: 1px solid var(--border-gray); }
+.detail-content { display: flex; gap: 30px; flex-wrap: wrap; }
+.detail-block { flex: 1; min-width: 250px; }
+.detail-block h4 {
+  font-size: 13px; color: var(--purple-dark); margin-bottom: 8px;
+  display: flex; align-items: center; gap: 6px;
+}
+.detail-block h4::before { content: ''; width: 3px; height: 14px; background: var(--green); border-radius: 2px; }
+.detail-block ol { padding-left: 20px; }
+.detail-block ol li { font-size: 13px; color: var(--text-gray); margin-bottom: 4px; }
+.deliverable-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.deliverable-tag {
+  font-size: 12px; padding: 3px 10px; border-radius: 12px;
+  background: #f0f0f0; color: var(--text-gray);
+}
+.billing-note { font-size: 12px; color: var(--text-gray); margin-top: 8px; line-height: 1.6; }
+.billing-note strong { color: var(--purple-dark); }
+.expand-icon { font-size: 10px; color: var(--text-gray); margin-left: 4px; transition: transform 0.2s; display: inline-block; }
+.data-row.expanded .expand-icon { transform: rotate(90deg); }
+.calc-discount-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 12px; opacity: 0.7; }
+.calc-discount-row .orig { text-decoration: line-through; }
+.calc-mode-hint { font-size: 11px; color: var(--text-gray); margin-bottom: 8px; padding: 6px 10px; background: #FFF8E1; border-radius: 6px; border-left: 3px solid var(--green); }
+
+/* 价格计算器 */
+.calculator-section { padding: 40px 0; background: #fff; }
+.calc-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 20px; }
+.calc-panel {
+  background: var(--bg-gray); border-radius: var(--radius-lg);
+  padding: 24px; border: 1px solid var(--border-gray);
+}
+.calc-panel h3 {
+  font-size: 16px; color: var(--purple-dark); margin-bottom: 16px;
+  display: flex; align-items: center; gap: 8px;
+}
+.calc-mode-toggle {
+  display: flex; gap: 0; margin-bottom: 16px;
+  border-radius: var(--radius); overflow: hidden; border: 2px solid var(--purple-light);
+}
+.calc-mode-toggle button {
+  flex: 1; padding: 10px; border: none; cursor: pointer;
+  font-size: 14px; font-weight: 600; font-family: var(--font-main);
+  background: #fff; color: var(--purple-light); transition: all 0.2s;
+}
+.calc-mode-toggle button.active { background: var(--purple-light); color: #fff; }
+.calc-service-list { max-height: 480px; overflow-y: auto; padding-right: 4px; }
+.calc-service-list::-webkit-scrollbar { width: 6px; }
+.calc-service-list::-webkit-scrollbar-thumb { background: var(--border-gray); border-radius: 3px; }
+.calc-item {
+  background: #fff; border-radius: var(--radius); padding: 12px 14px;
+  margin-bottom: 8px; border: 1px solid var(--border-gray); transition: border-color 0.2s;
+}
+.calc-item.selected { border-color: var(--green); background: #FFF8E1; }
+.calc-item-header { display: flex; align-items: flex-start; gap: 10px; }
+.calc-item-header label { flex: 1; cursor: pointer; font-size: 14px; }
+.calc-item-header label strong { color: var(--purple-dark); }
+.calc-item-header label .calc-item-desc { font-size: 12px; color: var(--text-gray); display: block; margin-top: 2px; }
+.calc-item-header input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--purple-light); cursor: pointer; margin-top: 2px; }
+.calc-qty-row { display: none; align-items: center; gap: 10px; padding: 8px 0 0 28px; }
+.calc-qty-row.show { display: flex; }
+.calc-qty-row label { font-size: 13px; color: var(--text-gray); white-space: nowrap; }
+.qty-stepper { display: flex; align-items: center; gap: 0; }
+.qty-stepper button {
+  width: 30px; height: 30px; border: 1px solid var(--border-gray);
+  background: #fff; cursor: pointer; font-size: 16px; color: var(--purple-light); font-family: var(--font-main);
+}
+.qty-stepper button:first-child { border-radius: 6px 0 0 6px; }
+.qty-stepper button:last-child { border-radius: 0 6px 6px 0; border-left: none; }
+.qty-stepper input {
+  width: 50px; height: 30px; text-align: center; border: 1px solid var(--border-gray);
+  border-left: none; border-right: none; font-size: 14px; font-family: var(--font-mono); color: var(--text-dark);
+}
+.calc-qty-row .unit-hint { font-size: 12px; color: var(--text-gray); }
+
+.calc-result { position: sticky; top: 80px; }
+.calc-result-panel {
+  background: linear-gradient(135deg, #000000, #333333);
+  border-radius: var(--radius-lg); padding: 28px; color: #fff; box-shadow: var(--shadow-lg);
+}
+.calc-result-panel h3 { color: #fff; margin-bottom: 20px; font-size: 18px; }
+.calc-empty { text-align: center; padding: 40px 0; opacity: 0.6; }
+.calc-empty .icon { font-size: 48px; margin-bottom: 10px; }
+.calc-empty p { font-size: 14px; }
+.calc-summary {
+  background: rgba(255,255,255,0.1); border-radius: var(--radius);
+  padding: 16px; margin-bottom: 16px; max-height: 240px; overflow-y: auto;
+}
+.calc-summary-item {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 6px 0; font-size: 14px; border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.calc-summary-item:last-child { border-bottom: none; }
+.calc-summary-item .name { opacity: 0.9; }
+.calc-summary-item .formula { font-family: var(--font-mono); font-size: 13px; opacity: 0.8; }
+.calc-summary-item .amount { font-family: var(--font-mono); font-weight: 600; }
+.calc-total {
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding: 16px 0; border-top: 2px solid rgba(255,255,255,0.2);
+}
+.calc-total .total-label { font-size: 16px; }
+.calc-total .total-value { font-size: 36px; font-weight: 700; font-family: var(--font-mono); color: var(--orange); }
+.calc-total .total-value small { font-size: 14px; opacity: 0.7; font-weight: 400; }
+.calc-action-btn {
+  width: 100%; padding: 14px; border: none; border-radius: var(--radius);
+  background: var(--green); color: #000; font-size: 16px; font-weight: 600;
+  cursor: pointer; font-family: var(--font-main); transition: background 0.2s;
+}
+.calc-action-btn:hover { background: var(--green-dark); }
+
+/* 联系/下单 */
+.contact-section { padding: 40px 0 60px; }
+.contact-wrap { display: grid; grid-template-columns: 1fr 1.2fr; gap: 24px; margin-top: 20px; }
+.contact-info { background: #fff; border-radius: var(--radius-lg); padding: 28px; box-shadow: var(--shadow); }
+.contact-info h3 { font-size: 18px; color: var(--purple-dark); margin-bottom: 16px; }
+.contact-info-item { display: flex; align-items: flex-start; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border-gray); }
+.contact-info-item:last-child { border-bottom: none; }
+.ci-icon {
+  width: 40px; height: 40px; border-radius: 10px; background: var(--purple-hover); color: var(--purple-light);
+  display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;
+}
+.ci-text { flex: 1; }
+.ci-label { font-size: 12px; color: var(--text-gray); }
+.ci-value { font-size: 14px; color: var(--text-dark); font-weight: 600; }
+.contact-form { background: #fff; border-radius: var(--radius-lg); padding: 28px; box-shadow: var(--shadow); }
+.contact-form h3 { font-size: 18px; color: var(--purple-dark); margin-bottom: 16px; }
+.form-group { margin-bottom: 16px; }
+.form-group label { display: block; font-size: 13px; color: var(--text-gray); margin-bottom: 6px; font-weight: 600; }
+.form-group label .required { color: #E74C3C; }
+.form-group select, .form-group input, .form-group textarea {
+  width: 100%; padding: 10px 12px; border: 1px solid var(--border-gray);
+  border-radius: var(--radius); font-size: 14px; font-family: var(--font-main);
+  color: var(--text-dark); background: var(--bg-gray); transition: border-color 0.2s;
+}
+.form-group select:focus, .form-group input:focus, .form-group textarea:focus {
+  outline: none; border-color: var(--purple-light); background: #fff;
+}
+.form-group textarea { resize: vertical; min-height: 80px; }
+.form-submit-btn {
+  width: 100%; padding: 14px; border: none; border-radius: var(--radius);
+  background: var(--green); color: #000; font-size: 16px; font-weight: 600; cursor: pointer; font-family: var(--font-main); transition: opacity 0.2s;
+}
+.form-submit-btn:hover { opacity: 0.9; }
+
+.toast {
+  position: fixed; top: 80px; left: 50%; transform: translateX(-50%) translateY(-100px);
+  background: var(--green); color: #000; padding: 14px 28px; border-radius: var(--radius);
+  font-size: 15px; font-weight: 600; box-shadow: var(--shadow-lg); z-index: 1000;
+  transition: transform 0.3s ease; white-space: pre-line;
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+/* 底部 */
+.footer { background: var(--purple-dark); color: rgba(255,255,255,0.7); padding: 30px 40px; text-align: center; font-size: 13px; }
+.footer p { margin-bottom: 6px; }
+.footer .note { opacity: 0.5; font-size: 12px; }
+
+/* 响应式 */
+@media (max-width: 1024px) {
+  .calc-wrap { grid-template-columns: 1fr; }
+  .contact-wrap { grid-template-columns: 1fr; }
+  .calc-result { position: static; }
+}
+@media (max-width: 768px) {
+  .navbar { padding: 0 16px; }
+  .nav-links { gap: 2px; }
+  .nav-links a { padding: 6px 8px; font-size: 13px; }
+  .hero { padding: 40px 16px 30px; }
+  .hero h1 { font-size: 26px; }
+  .hero-card { min-width: 140px; padding: 14px 18px; }
+  .hero-card .value { font-size: 18px; }
+  .tab-btn { padding: 10px 16px; font-size: 13px; }
+  .pricing-table-wrap { overflow-x: auto; }
+  .pricing-table { min-width: 700px; }
+  .container { padding: 0 12px; }
+  .calc-panel, .contact-info, .contact-form { padding: 18px; }
+  .calc-total .total-value { font-size: 28px; }
+}
+</style>
+</head>
+<body>
+
+<!-- 导航栏 -->
+<nav class="navbar">
+  <div class="nav-logo">智能化赋能<span>·</span>报价</div>
+  <div class="nav-links">
+    <a href="#flow">服务流程</a>
+    <a href="#pricing">报价表</a>
+    <a href="#calculator">计算器</a>
+    <a href="#contact">联系下单</a>
+  </div>
+</nav>
+
+<!-- Hero区域 -->
+<section class="hero">
+  <h1>智能化赋能服务报价</h1>
+  <p>AI驱动 · 需求承接 · 灵活交付 · 为团队提供全流程AI赋能服务</p>
+  <div class="hero-cards">
+    <div class="hero-card">
+      <div class="label">开发方式</div>
+      <div class="value">AI驱动 <small>全流程辅助</small></div>
+    </div>
+    <div class="hero-card">
+      <div class="label">计费方式</div>
+      <div class="value">按量计费 <small>灵活透明</small></div>
+    </div>
+    <div class="hero-card">
+      <div class="label">结算方式</div>
+      <div class="value">先签后付</div>
+    </div>
+    <div class="hero-card" style="border-color: var(--green);">
+      <div class="label">限时优惠</div>
+      <div class="value">付费项目6折 <small>日常答疑免费</small></div>
+    </div>
+  </div>
+</section>
+
+<!-- 服务流程 -->
+<section class="flow-section" id="flow">
+  <div class="container">
+    <h2 class="section-title">服务流程</h2>
+    <p class="section-desc">AI开发项目标准交付流程，共5个阶段（咨询服务与BI服务流程可灵活调整）</p>
+    <div class="flow-wrap">
+      <div class="flow-step">
+        <div class="flow-step-num">1</div>
+        <div class="flow-step-title">确认需求</div>
+        <div class="flow-step-desc">沟通业务场景<br>明确核心需求</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-step-num">2</div>
+        <div class="flow-step-title">需求完善</div>
+        <div class="flow-step-desc">细化功能清单<br>输出需求文档</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-step-num">3</div>
+        <div class="flow-step-title">按需开发</div>
+        <div class="flow-step-desc">AI辅助编码<br>按页面逐步交付</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-step-num">4</div>
+        <div class="flow-step-title">产品demo</div>
+        <div class="flow-step-desc">功能演示验收<br>确认交付效果</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-step-num">5</div>
+        <div class="flow-step-title">产品上线</div>
+        <div class="flow-step-desc">测试验收<br>部署上线交付<br><span class="flow-step-note">上线费用已含在开发报价中</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 报价表区域 -->
+<div id="pricing" class="container">
+  <div class="tab-section">
+    <h2 class="section-title">服务报价表</h2>
+    <p class="section-desc">点击服务行可展开查看详细工序与交付物类型 · 付费报价限时6折（原价已标注删除线），日常技术答疑限时免费 · 仅供参考以实际报价为准</p>
+    <p id="tabIntro" class="tab-intro" style="font-size:13px;color:var(--text-gray);padding:8px 0 12px 18px;border-left:3px solid var(--green);margin-bottom:0;"></p>
+    <div class="tab-bar">
+      <button class="tab-btn active" data-tab="dev">AI开发项目</button>
+      <button class="tab-btn" data-tab="consult">咨询服务</button>
+      <button class="tab-btn" data-tab="bi">BI报表服务</button>
+    </div>
+  </div>
+  <div class="pricing-section">
+    <div class="pricing-table-wrap">
+      <table class="pricing-table" id="table-dev">
+        <thead>
+          <tr>
+            <th>序号</th>
+            <th class="col-cat2">服务分类</th>
+            <th class="col-name">品项</th>
+            <th class="col-desc">标准规格 / 内容</th>
+            <th class="col-price">按次计费</th>
+            <th class="col-price">包月计费</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <table class="pricing-table" id="table-consult" style="display:none;">
+        <thead>
+          <tr>
+            <th>序号</th>
+            <th class="col-cat2">服务分类</th>
+            <th class="col-name">品项</th>
+            <th class="col-desc">标准规格 / 内容</th>
+            <th class="col-price">按次计费</th>
+            <th class="col-price">包月计费</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <table class="pricing-table" id="table-bi" style="display:none;">
+        <thead>
+          <tr>
+            <th>序号</th>
+            <th class="col-cat2">服务分类</th>
+            <th class="col-name">品项</th>
+            <th class="col-desc">标准规格 / 内容</th>
+            <th class="col-price">按次计费</th>
+            <th class="col-price">包月计费</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- 价格计算器 -->
+<section id="calculator" class="calculator-section">
+  <div class="container">
+    <h2 class="section-title">价格计算器</h2>
+    <p class="section-desc">选择所需服务并输入对应数量，实时计算总费用</p>
+    <div class="calc-wrap">
+      <div class="calc-panel">
+        <h3>选择服务</h3>
+        <div class="calc-mode-toggle">
+          <button class="active" data-mode="perUse">按次计费</button>
+          <button data-mode="monthly">包月计费</button>
+        </div>
+        <div class="calc-service-list" id="calcServiceList"></div>
+      </div>
+      <div class="calc-result">
+        <div class="calc-result-panel">
+          <h3>费用汇总</h3>
+          <div id="calcResultContent">
+            <div class="calc-empty">
+              <div class="icon">📊</div>
+              <p>请在左侧选择服务项目<br>并输入所需数量，费用将实时计算</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 联系/下单 -->
+<section id="contact" class="contact-section">
+  <div class="container">
+    <h2 class="section-title">联系与下单</h2>
+    <p class="section-desc">通过内部IM群组联系 @walt.w，或直接填写需求表单提交</p>
+    <div class="contact-wrap">
+      <div class="contact-info">
+        <h3>联系方式</h3>
+        <div class="contact-info-item">
+          <div class="ci-icon">💬</div>
+          <div class="ci-text"><div class="ci-label">即时通讯</div><div class="ci-value">内部IM群组 @walt.w</div></div>
+        </div>
+      </div>
+      <div class="contact-form">
+        <h3>提交需求</h3>
+        <form id="contactForm">
+          <div class="form-group">
+            <label>服务大类 <span class="required">*</span></label>
+            <select id="formCategory" required>
+              <option value="">请选择...</option>
+              <option value="dev">AI开发项目</option>
+              <option value="consult">咨询服务</option>
+              <option value="bi">BI报表服务</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>服务项目 <span class="required">*</span></label>
+            <select id="formService" required>
+              <option value="">请先选择大类...</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>计费方式 <span class="required">*</span></label>
+            <select id="formMode" required>
+              <option value="">请选择...</option>
+              <option value="perUse">按次计费</option>
+              <option value="monthly">包月计费</option>
+            </select>
+          </div>
+          <div class="form-group" id="formQtyGroup">
+            <label id="formQtyLabel">预估数量</label>
+            <input type="number" id="formQty" placeholder="如：3个页面、5个报表等" min="1" value="1">
+          </div>
+          <div class="form-group">
+            <label>需求描述 <span class="required">*</span></label>
+            <textarea id="formDesc" placeholder="请简要描述您的具体需求..." required></textarea>
+          </div>
+          <div class="form-group">
+            <label>联系方式 <span class="required">*</span></label>
+            <input type="text" id="formContact" placeholder="工号/姓名/IM账号" required>
+          </div>
+          <button type="submit" class="form-submit-btn">提交需求</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 底部 -->
+<footer class="footer">
+  <p>智能化赋能项目 · AI驱动开发服务</p>
+  <p>交付物涵盖软件/平台/报表/培训/文档 · 按需计量计费 · 先签后付，内部信用结算</p>
+  <p class="note">计费单位 coin = 内部信用积分 · 付费报价限时6折（保留一位小数），原价见删除线标注 · 日常技术答疑限时免费 · 仅供参考，实际会有上浮或调整，以实际报价为准 · 最终解释权归智能化赋能团队所有</p>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ========== 服务数据 ==========
+// 价格字段说明：origBase/origVar 为原价，6折价由代码计算 (orig * 0.6).toFixed(1)
+const services = {
+  dev: {
+    title: "AI开发项目",
+    intro: "使用AI辅助开发，交付物为软件或平台。模式A/B/C均含一个月项目维护期（缺陷修复、功能微调、系统监控与版本迭代），后续维护可选购项目维护服务（见下表DM项）。报价已含人工成本与AI token成本。",
+    items: [
+      {
+        id: "DA", mode: "A", modeLabel: "模式A", cat2: "按文档开发", name: "完整需求文档开发",
+        desc: "甲方提供完整需求文档与设计参考，按文档直接开发交付。含一个月项目维护期。",
+        details: [
+          "甲方提供完整需求文档、原型图或设计稿",
+          "确认技术方案与开发计划",
+          "AI辅助编码开发，按页面逐步交付",
+          "功能测试与缺陷修复",
+          "部署上线与交付文档",
+          "含一个月项目维护期（缺陷修复、功能微调、系统监控与版本迭代）"
+        ],
+        deliverables: ["Web应用", "数据看板", "API接口", "内部工具", "自动化工作流", "AI模型/Agent"],
+        perUse: { origBase: 0.5, origVar: 1.0, unit: "页面数" },
+        monthly: null,
+      },
+      {
+        id: "DB", mode: "B", modeLabel: "模式B", cat2: "整理需求+开发", name: "想法逻辑整理开发",
+        desc: "甲方提供相关想法与业务逻辑，整理需求文档后开发交付。含一个月项目维护期。",
+        details: [
+          "甲方提供业务想法与相关逻辑说明",
+          "AI辅助梳理并输出结构化需求文档",
+          "需求确认与评审，调整开发范围",
+          "AI辅助编码开发，按页面逐步交付",
+          "功能测试与缺陷修复",
+          "部署上线与交付文档",
+          "含一个月项目维护期（缺陷修复、功能微调、系统监控与版本迭代）"
+        ],
+        deliverables: ["Web应用", "数据看板", "API接口", "内部工具", "自动化工作流", "AI模型/Agent"],
+        perUse: { origBase: 1.0, origVar: 1.5, unit: "页面数" },
+        monthly: null,
+      },
+      {
+        id: "DC", mode: "C", modeLabel: "模式C", cat2: "逻辑拆解+开发", name: "想法拆解全流程开发",
+        desc: "甲方仅有想法无明确逻辑，拆解业务逻辑、整理需求后开发交付。含一个月项目维护期。",
+        details: [
+          "甲方提供想法与预期效果",
+          "AI辅助拆解业务逻辑与交互流程",
+          "梳理完整需求文档与功能清单",
+          "需求确认与评审，明确开发范围",
+          "AI辅助编码开发，按页面逐步交付",
+          "功能测试与缺陷修复",
+          "部署上线与交付文档",
+          "含一个月项目维护期（缺陷修复、功能微调、系统监控与版本迭代）"
+        ],
+        deliverables: ["Web应用", "数据看板", "API接口", "内部工具", "自动化工作流", "AI模型/Agent"],
+        perUse: { origBase: 1.5, origVar: 2.0, unit: "页面数" },
+        monthly: null,
+      },
+      {
+        id: "DM", mode: null, modeLabel: "", cat2: "后续维护", name: "项目维护服务",
+        desc: "项目交付后的持续维护，含缺陷修复、功能微调、系统监控、版本迭代、技术答疑与项目护航",
+        details: [
+          "日常缺陷修复与紧急问题处理",
+          "小功能调整与界面微调",
+          "系统运行监控与性能优化",
+          "依赖更新与安全补丁",
+          "定期版本迭代与功能增强",
+          "运维报告与技术支持",
+          "日常技术问题答疑与指导",
+          "项目全周期技术决策与风险评估",
+          "关键节点方案审核与风险预警"
+        ],
+        deliverables: [],
+        perUse: { origBase: 0.5, origVar: 0.5, unit: "页面数" },
+        monthly: { origBase: 0.3, origVar: 0.3, unit: "页面数" },
+      }
+    ]
+  },
+  consult: {
+    title: "咨询服务",
+    intro: "提供AI能力培训与最佳实践输出，日常技术答疑限时免费。所有服务先签后付，内部信用结算。",
+    items: [
+      {
+        id: "S4", cat2: "团队赋能", name: "AI能力培训",
+        desc: "AI编程工具使用培训，含实操与理论",
+        details: ["定制培训大纲", "准备实操案例与素材", "现场培训（理论+实操）", "课后答疑与资料"],
+        deliverables: [],
+        perUse: { origBase: 0.8, origVar: 0.3, unit: "参训人数" },
+        monthly: null,
+      },
+      {
+        id: "S6", cat2: "团队赋能", name: "最佳实践输出",
+        desc: "AI开发最佳实践文档编写",
+        details: ["总结AI开发实践经验", "编写最佳实践文档", "内部评审与修订", "发布与推广"],
+        deliverables: [],
+        perUse: { origBase: 0.5, origVar: 0.5, unit: "文档数" },
+        monthly: { origBase: 0.3, origVar: 0.3, unit: "文档数" },
+      },
+      {
+        id: "S9", cat2: "日常支持", name: "日常技术答疑",
+        desc: "日常技术问题答疑与指导（限时免费）",
+        details: ["响应日常技术问题", "提供解决方案与指导", "定期回顾高频问题", "更新FAQ文档"],
+        deliverables: [],
+        free: true,
+        perUse: { origBase: 0, origVar: 0, unit: "" },
+        monthly: { origBase: 0.5, origVar: 0, unit: "" },
+      }
+    ]
+  },
+  bi: {
+    title: "BI报表服务",
+    intro: "提供报表迁移、搭建与日常维护服务。报表搭建模式A/B/C均含一个月维护期（仅含异常处理）。所有服务先签后付，内部信用结算。",
+    items: [
+      {
+        id: "B1", cat2: "报表迁移", name: "单个报表迁移",
+        desc: "完成单个报表的迁移，不包含手动维护",
+        details: ["分析原报表结构与数据源", "配置目标BI平台连接", "迁移报表设计与布局", "验证数据准确性", "交付迁移报表"],
+        deliverables: [],
+        perUse: { origBase: 0.2, origVar: 0, unit: "" },
+        monthly: null,
+      },
+      {
+        id: "B2A", mode: "A", modeLabel: "模式A", cat2: "报表搭建", name: "完整需求报表搭建",
+        desc: "甲方提供完整报表需求文档，按文档直接搭建。含一个月维护期（仅含异常处理）。",
+        details: ["甲方提供完整报表需求与数据源", "确认报表设计方案", "AI辅助搭建报表", "数据验证与调优", "交付报表与使用文档", "含一个月维护期（仅含异常处理）"],
+        deliverables: [],
+        perUse: { origBase: 0.5, origVar: 1.0, unit: "报表数" },
+        monthly: null,
+      },
+      {
+        id: "B2B", mode: "B", modeLabel: "模式B", cat2: "报表搭建", name: "想法逻辑整理搭建",
+        desc: "甲方提供报表想法与逻辑，整理需求后搭建。含一个月维护期（仅含异常处理）。",
+        details: ["甲方提供报表想法与逻辑说明", "AI辅助梳理报表需求", "需求确认与评审", "AI辅助搭建报表", "数据验证与调优", "交付报表与使用文档", "含一个月维护期（仅含异常处理）"],
+        deliverables: [],
+        perUse: { origBase: 1.0, origVar: 1.5, unit: "报表数" },
+        monthly: null,
+      },
+      {
+        id: "B2C", mode: "C", modeLabel: "模式C", cat2: "报表搭建", name: "想法拆解全流程搭建",
+        desc: "甲方仅有报表想法，拆解逻辑整理需求后搭建。含一个月维护期（仅含异常处理）。",
+        details: ["甲方提供报表想法与预期效果", "AI辅助拆解报表逻辑", "梳理完整报表需求文档", "需求确认与评审", "AI辅助搭建报表", "数据验证与调优", "交付报表与使用文档", "含一个月维护期（仅含异常处理）"],
+        deliverables: [],
+        perUse: { origBase: 1.5, origVar: 2.0, unit: "报表数" },
+        monthly: null,
+      },
+      {
+        id: "B3", cat2: "日常维护", name: "报表日常手动维护",
+        desc: "报表日常数据更新与汇报，含数据刷新、异常处理与定期汇报",
+        details: ["日常数据更新与刷新", "报表异常监控与处理", "定期数据汇报与输出", "报表优化建议"],
+        deliverables: [],
+        perUse: { origBase: 0.5, origVar: 0.5, unit: "报表数" },
+        monthly: { origBase: 0.3, origVar: 0.3, unit: "报表数" },
+      }
+    ]
+  }
+};
+
+// ========== 工具函数 ==========
+// 计算6折后价格 (保留一位小数)
+function discountPrice(orig) {
+  return Math.round(orig * 0.6 * 10) / 10;
+}
+
+// 构建原价+折后价的HTML
+function buildDiscountedPrice(p) {
+  var base = discountPrice(p.origBase);
+  var v = p.origVar > 0 ? discountPrice(p.origVar) : 0;
+  var origText = p.origVar > 0 ? p.origBase + ' + ' + p.origVar + '×' + (p.unit || '数量') : p.origBase + '';
+  var nowText = v > 0 ? base + ' + ' + v + '×' + (p.unit || '数量') : base + '';
+  return '<span class="price-orig">' + origText + '</span><span class="price-now">' + nowText + '</span>';
+}
+
+// ========== 渲染报价表 ==========
+function renderPricingTable(catKey) {
+  var tbody = document.querySelector('#table-' + catKey + ' tbody');
+  var data = services[catKey];
+  var html = '';
+  data.items.forEach(function(item, idx) {
+    var freeBadge = '<span class="price-free">限时免费</span>';
+    var perUseText = item.free
+      ? freeBadge
+      : (item.perUse
+      ? buildDiscountedPrice(item.perUse) + '<span class="coin-unit"> coin</span><br><span class="discount-tag">限时6折</span> <span class="pay-tag">先签后付</span>'
+      : '<span class="price-na">—</span>');
+    var monthlyText = item.free
+      ? freeBadge
+      : (item.monthly
+      ? buildDiscountedPrice(item.monthly) + '<span class="coin-unit"> coin</span><br><span class="discount-tag">限时6折</span> <span class="pay-tag">先签后付</span>'
+      : '<span class="price-na">—</span>');
+    var modeClass = item.mode ? item.mode.toLowerCase() : '';
+    var cat2Content = item.mode
+      ? '<span class="mode-badge ' + modeClass + '">' + item.modeLabel + '</span><br><span class="cat2-tag">' + item.cat2 + '</span>'
+      : '<span class="cat2-tag">' + item.cat2 + '</span>';
+    html += '<tr class="data-row" data-cat="' + catKey + '" data-idx="' + idx + '">';
+    html += '<td>' + item.id + ' <span class="expand-icon">▸</span></td>';
+    html += '<td>' + cat2Content + '</td>';
+    html += '<td><div class="item-name">' + item.name + '</div></td>';
+    html += '<td><div class="item-desc">' + item.desc + '</div></td>';
+    html += '<td class="price-cell"><span class="price-formula">' + perUseText + '</span></td>';
+    html += '<td class="price-cell"><span class="price-formula">' + monthlyText + '</span></td>';
+    html += '</tr>';
+    html += '<tr class="detail-row" id="detail-' + catKey + '-' + idx + '"><td colspan="6">';
+    html += '<div class="detail-content">';
+    html += '<div class="detail-block"><h4>服务工序</h4><ol>';
+    item.details.forEach(function(d) { html += '<li>' + d + '</li>'; });
+    html += '</ol></div>';
+    if (item.deliverables && item.deliverables.length > 0) {
+      html += '<div class="detail-block"><h4>支持交付物类型</h4><div class="deliverable-tags">';
+      item.deliverables.forEach(function(d) { html += '<span class="deliverable-tag">' + d + '</span>'; });
+      html += '</div>';
+      var unitLabel = item.perUse.unit || '数量';
+      html += '<p class="billing-note"><strong>计费说明：</strong>基础费覆盖需求分析与环境准备，变量费按实际' + unitLabel + '线性计费。交付物类型不影响单价，按统一' + unitLabel + '计费。所有服务先签后付，内部信用结算。' + (catKey === 'dev' ? '报价已含人工成本与AI token成本。' : '') + '</p>';
+      html += '</div>';
+    } else {
+      html += '<div class="detail-block"><h4>计费说明</h4>';
+      html += '<p class="billing-note">';
+      if (item.free) {
+        html += '<strong>限时免费：</strong>当前限时免费，后续恢复原价<br>';
+        if (item.monthly && item.monthly.origBase > 0) {
+          var mb = discountPrice(item.monthly.origBase);
+          html += '<strong>包月原价：</strong>' + item.monthly.origBase + ' coin / 月 → 6折 ' + mb + ' coin / 月<br>';
+        }
+      } else {
+        if (item.perUse && item.perUse.origVar > 0) {
+          var pb = discountPrice(item.perUse.origBase);
+          var pv = discountPrice(item.perUse.origVar);
+          html += '<strong>按次：</strong>原价 ' + item.perUse.origBase + ' + ' + item.perUse.origVar + '×' + item.perUse.unit + ' → 6折 ' + pb + ' + ' + pv + '×' + item.perUse.unit + ' / 次<br>';
+        } else if (item.perUse) {
+          var pb2 = discountPrice(item.perUse.origBase);
+          html += '<strong>按次：</strong>原价 ' + item.perUse.origBase + ' coin → 6折 ' + pb2 + ' coin / 次<br>';
+        }
+        if (item.monthly && item.monthly.origVar > 0) {
+          var mnb = discountPrice(item.monthly.origBase);
+          var mnv = discountPrice(item.monthly.origVar);
+          html += '<strong>包月：</strong>原价 ' + item.monthly.origBase + ' + ' + item.monthly.origVar + '×' + item.monthly.unit + ' → 6折 ' + mnb + ' + ' + mnv + '×' + item.monthly.unit + ' / 月<br>';
+        } else if (item.monthly) {
+          var mnb2 = discountPrice(item.monthly.origBase);
+          html += '<strong>包月：</strong>原价 ' + item.monthly.origBase + ' coin → 6折 ' + mnb2 + ' coin / 月<br>';
+        }
+      }
+      html += '所有服务均为先签后付，内部信用结算。' + (catKey === 'dev' ? '<br>报价已含人工成本与AI token成本。' : '') + '</p>';
+      html += '</div>';
+    }
+    html += '</div></td></tr>';
+  });
+  if (catKey === 'dev') {
+    html += '<tr><td colspan="6" style="padding: 10px 16px; font-size: 12px; color: var(--text-gray); background: #FAFAFA; border-top: 2px solid var(--border-gray);">备注：AI开发项目报价已包含人工成本与AI token成本。</td></tr>';
+  }
+  tbody.innerHTML = html;
+}
+
+// 渲染Tab介绍文字 (I7+M10)
+function renderTabIntro(catKey) {
+  var introEl = document.getElementById('tabIntro');
+  if (introEl && services[catKey] && services[catKey].intro) {
+    introEl.textContent = services[catKey].intro;
+    introEl.style.display = 'block';
+  } else if (introEl) {
+    introEl.style.display = 'none';
+  }
+}
+
+renderPricingTable('dev');
+renderPricingTable('consult');
+renderPricingTable('bi');
+renderTabIntro('dev');
+
+// ========== Tab切换 ==========
+document.querySelectorAll('.tab-btn').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    var tab = btn.dataset.tab;
+    document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+    btn.classList.add('active');
+    document.querySelectorAll('.pricing-table').forEach(function(t) { t.style.display = 'none'; });
+    var targetTable = document.getElementById('table-' + tab);
+    targetTable.style.display = '';
+    targetTable.style.opacity = '0';
+    targetTable.style.transition = 'opacity 0.3s';
+    setTimeout(function() { targetTable.style.opacity = '1'; }, 50);
+    renderTabIntro(tab);
+  });
+});
+
+// ========== 行展开/折叠 ==========
+document.querySelectorAll('.pricing-table tbody').forEach(function(tbody) {
+  tbody.addEventListener('click', function(e) {
+    var row = e.target.closest('.data-row');
+    if (!row) return;
+    var cat = row.dataset.cat;
+    var idx = row.dataset.idx;
+    var detailRow = document.getElementById('detail-' + cat + '-' + idx);
+    if (detailRow) {
+      detailRow.classList.toggle('open');
+      row.classList.toggle('expanded');
+    }
+  });
+});
+
+// ========== 价格计算器 ==========
+var calcMode = 'perUse';
+var selectedServices = {};
+
+function renderCalcServiceList() {
+  var container = document.getElementById('calcServiceList');
+  var html = '';
+  html += '<div class="calc-mode-hint">当前为' + (calcMode === 'perUse' ? '按次' : '包月') + '计费模式，每次仅能计算同一计费模式下的服务</div>';
+  ['dev', 'consult', 'bi'].forEach(function(catKey) {
+    html += '<div style="margin-bottom:12px">';
+    html += '<div style="font-size:13px;font-weight:700;color:var(--purple-dark);margin-bottom:6px;padding-left:4px;">' + services[catKey].title + '</div>';
+    services[catKey].items.forEach(function(item, idx) {
+      var priceData = calcMode === 'perUse' ? item.perUse : item.monthly;
+      var hasPrice = priceData !== null;
+      var isSelected = selectedServices[item.id];
+      var isFree = item.free;
+      var showQty = hasPrice && !isFree && (priceData.origVar > 0 || priceData.origBase > 0);
+      html += '<div class="calc-item' + (isSelected ? ' selected' : '') + '">';
+      html += '<div class="calc-item-header">';
+      html += '<input type="checkbox" id="calc-' + item.id + '" data-id="' + item.id + '" data-cat="' + catKey + '" data-idx="' + idx + '"' + (isSelected ? ' checked' : '') + (hasPrice ? '' : ' disabled') + '>';
+      html += '<label for="calc-' + item.id + '"><strong>' + item.name + '</strong>';
+      var priceLabel = '';
+      if (isFree) {
+        priceLabel = '限时免费';
+      } else if (hasPrice) {
+        var db = discountPrice(priceData.origBase);
+        var dv = priceData.origVar > 0 ? discountPrice(priceData.origVar) : 0;
+        priceLabel = dv > 0 ? db + ' + ' + dv + '×' + (priceData.unit || '数量') : db + '';
+        priceLabel += ' coin / ' + (calcMode === 'perUse' ? '次' : '月');
+      } else {
+        priceLabel = '不支持此模式';
+      }
+      html += '<span class="calc-item-desc">' + item.desc + ' · ' + priceLabel + '</span></label>';
+      html += '</div>';
+      if (showQty) {
+        html += '<div class="calc-qty-row' + (isSelected ? ' show' : '') + '" id="qty-' + item.id + '">';
+        html += '<label>' + (priceData.unit || '数量') + '：</label>';
+        html += '<div class="qty-stepper">';
+        html += '<button type="button" data-action="dec" data-id="' + item.id + '">-</button>';
+        html += '<input type="number" id="input-' + item.id + '" value="' + (isSelected ? selectedServices[item.id].qty : 1) + '" min="1" max="99" data-id="' + item.id + '">';
+        html += '<button type="button" data-action="inc" data-id="' + item.id + '">+</button>';
+        html += '</div><span class="unit-hint">' + (priceData.unit || '数量') + '</span></div>';
+      }
+      html += '</div>';
+    });
+    html += '</div>';
+  });
+  container.innerHTML = html;
+  bindCalcEvents();
+}
+
+function bindCalcEvents() {
+  document.querySelectorAll('#calcServiceList input[type="checkbox"]').forEach(function(cb) {
+    cb.addEventListener('change', function(e) {
+      var id = e.target.dataset.id;
+      var cat = e.target.dataset.cat;
+      var idx = parseInt(e.target.dataset.idx);
+      if (e.target.checked) {
+        var priceData = calcMode === 'perUse' ? services[cat].items[idx].perUse : services[cat].items[idx].monthly;
+        selectedServices[id] = { cat: cat, idx: idx, qty: 1, hasVar: priceData && priceData.origVar > 0 };
+      } else {
+        delete selectedServices[id];
+      }
+      renderCalcServiceList();
+      updateCalcResult();
+    });
+  });
+  document.querySelectorAll('#calcServiceList .qty-stepper button').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      var id = e.target.dataset.id;
+      var action = e.target.dataset.action;
+      var input = document.getElementById('input-' + id);
+      var val = parseInt(input.value) || 1;
+      if (action === 'inc') val = Math.min(99, val + 1);
+      if (action === 'dec') val = Math.max(1, val - 1);
+      input.value = val;
+      if (selectedServices[id]) { selectedServices[id].qty = val; updateCalcResult(); }
+    });
+  });
+  document.querySelectorAll('#calcServiceList .qty-stepper input').forEach(function(inp) {
+    inp.addEventListener('input', function(e) {
+      var id = e.target.dataset.id;
+      var val = parseInt(e.target.value) || 1;
+      val = Math.max(1, Math.min(99, val));
+      if (selectedServices[id]) { selectedServices[id].qty = val; updateCalcResult(); }
+    });
+  });
+}
+
+function updateCalcResult() {
+  var container = document.getElementById('calcResultContent');
+  var keys = Object.keys(selectedServices);
+  if (keys.length === 0) {
+    container.innerHTML = '<div class="calc-empty"><div class="icon">📊</div><p>请在左侧选择服务项目<br>并输入所需数量，费用将实时计算</p></div>';
+    return;
+  }
+  var totalCharge = 0;
+  var totalOrig = 0;
+  var summaryHtml = '';
+  keys.forEach(function(id) {
+    var sel = selectedServices[id];
+    var item = services[sel.cat].items[sel.idx];
+    var priceData = calcMode === 'perUse' ? item.perUse : item.monthly;
+    if (!priceData) return;
+    var isFree = item.free;
+    var qty = isFree ? 1 : (sel.qty || 1);
+    var charge = isFree ? 0 : discountPrice(priceData.origBase) * qty + (priceData.origVar > 0 ? discountPrice(priceData.origVar) * qty : 0);
+    charge = Math.round(charge * 10) / 10;
+    var origCharge = isFree ? 0 : priceData.origBase * qty + (priceData.origVar > 0 ? priceData.origVar * qty : 0);
+    origCharge = Math.round(origCharge * 10) / 10;
+    totalCharge += charge;
+    totalOrig += origCharge;
+    var formulaText = isFree ? '免费' : (priceData.origVar > 0
+      ? discountPrice(priceData.origBase) + ' + ' + discountPrice(priceData.origVar) + '×' + qty
+      : discountPrice(priceData.origBase) + (qty > 1 ? '×' + qty : ''));
+    var modeLabel = calcMode === 'perUse' ? '次' : '月';
+    summaryHtml += '<div class="calc-summary-item">';
+    summaryHtml += '<div><div class="name">' + item.id + ' ' + item.name + '</div>';
+    summaryHtml += '<div class="formula">' + formulaText + (isFree ? '' : ' / ' + modeLabel) + '</div></div>';
+    summaryHtml += '<div class="amount">' + (isFree ? '免费' : charge.toFixed(1) + ' coin') + '</div></div>';
+  });
+  var html = '<div class="calc-summary">' + summaryHtml + '</div>';
+  if (totalOrig > totalCharge) {
+    html += '<div class="calc-discount-row">';
+    html += '<span>原价</span><span class="orig">' + totalOrig.toFixed(1) + ' coin</span>';
+    html += '</div>';
+    html += '<div class="calc-discount-row" style="border-bottom:none;">';
+    html += '<span>限时6折</span><span style="color:var(--orange);font-weight:600;">-' + (totalOrig - totalCharge).toFixed(1) + ' coin</span>';
+    html += '</div>';
+  }
+  html += '<div class="calc-total">';
+  html += '<div><div class="total-label">总费用 <small>(' + (calcMode === 'perUse' ? '按次' : '包月') + '·限时6折)</small></div></div>';
+  html += '<div class="total-value">' + totalCharge.toFixed(1) + '<small> coin</small></div></div>';
+  html += '<button class="calc-action-btn" onclick="scrollToContact()">联系下单</button>';
+  container.innerHTML = html;
+}
+
+document.querySelectorAll('.calc-mode-toggle button').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.calc-mode-toggle button').forEach(function(b) { b.classList.remove('active'); });
+    btn.classList.add('active');
+    calcMode = btn.dataset.mode;
+    selectedServices = {};
+    renderCalcServiceList();
+    updateCalcResult();
+  });
+});
+
+function scrollToContact() { document.getElementById('contact').scrollIntoView({ behavior: 'smooth' }); }
+renderCalcServiceList();
+
+// ========== 表单交互 ==========
+document.getElementById('formCategory').addEventListener('change', function(e) {
+  var cat = e.target.value;
+  var serviceSelect = document.getElementById('formService');
+  var qtyLabel = document.getElementById('formQtyLabel');
+  serviceSelect.innerHTML = '<option value="">请选择...</option>';
+  if (cat === 'dev') {
+    qtyLabel.textContent = '预估页面数';
+    document.getElementById('formQty').placeholder = '如：5个页面、10个页面等';
+    services.dev.items.forEach(function(item) {
+      var opt = document.createElement('option');
+      opt.value = item.id;
+      opt.textContent = item.modeLabel ? item.modeLabel + ' - ' + item.name : item.name;
+      serviceSelect.appendChild(opt);
+    });
+  } else if (cat === 'consult') {
+    qtyLabel.textContent = '预估数量';
+    document.getElementById('formQty').placeholder = '如：1次、3人等';
+    services.consult.items.forEach(function(item) {
+      var opt = document.createElement('option');
+      opt.value = item.id;
+      opt.textContent = item.id + ' - ' + item.name;
+      serviceSelect.appendChild(opt);
+    });
+  } else if (cat === 'bi') {
+    qtyLabel.textContent = '预估报表数';
+    document.getElementById('formQty').placeholder = '如：3个报表、5个报表等';
+    services.bi.items.forEach(function(item) {
+      var opt = document.createElement('option');
+      opt.value = item.id;
+      opt.textContent = item.modeLabel ? item.modeLabel + ' - ' + item.name : item.name;
+      serviceSelect.appendChild(opt);
+    });
+  } else {
+    qtyLabel.textContent = '预估数量';
+  }
+});
+
+document.getElementById('formService').addEventListener('change', function(e) {
+  var serviceId = e.target.value;
+  var modeSelect = document.getElementById('formMode');
+  var found = null;
+  for (var i = 0; i < ['dev', 'consult', 'bi'].length; i++) {
+    var cat = ['dev', 'consult', 'bi'][i];
+    var item = services[cat].items.find(function(x) { return x.id === serviceId; });
+    if (item) { found = item; break; }
+  }
+  modeSelect.innerHTML = '<option value="">请选择...</option>';
+  if (found) {
+    if (found.free) {
+      modeSelect.innerHTML += '<option value="free">免费（限时）</option>';
+    } else {
+      if (found.perUse) modeSelect.innerHTML += '<option value="perUse">按次计费</option>';
+      if (found.monthly) modeSelect.innerHTML += '<option value="monthly">包月计费</option>';
+    }
+  }
+});
+
+document.getElementById('contactForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  var cat = document.getElementById('formCategory').value;
+  var svc = document.getElementById('formService').value;
+  var mode = document.getElementById('formMode').value;
+  var qty = document.getElementById('formQty').value;
+  var desc = document.getElementById('formDesc').value.trim();
+  var contact = document.getElementById('formContact').value.trim();
+  if (!cat || !svc || !mode || !desc || !contact) {
+    showToast('请填写所有必填项', 'error'); return;
+  }
+  var catName = services[cat].title;
+  var svcName = svc;
+  for (var i = 0; i < ['dev', 'consult', 'bi'].length; i++) {
+    var c = ['dev', 'consult', 'bi'][i];
+    var item = services[c].items.find(function(x) { return x.id === svc; });
+    if (item) { svcName = item.name; break; }
+  }
+  var modeName = mode === 'perUse' ? '按次' : (mode === 'monthly' ? '包月' : '免费（限时）');
+  showToast('需求已提交！\n' + catName + ' / ' + svcName + ' / ' + modeName + ' / 数量' + qty + '\n我们将在4小时内响应', 'success');
+  document.getElementById('contactForm').reset();
+  document.getElementById('formService').innerHTML = '<option value="">请先选择大类...</option>';
+  document.getElementById('formMode').innerHTML = '<option value="">请选择...</option>';
+});
+
+function showToast(msg, type) {
+  var toast = document.getElementById('toast');
+  toast.textContent = msg;
+  if (type === 'error') {
+    toast.style.background = '#E74C3C';
+    toast.style.color = '#fff';
+  } else {
+    toast.style.background = 'var(--green)';
+    toast.style.color = '#000';
+  }
+  toast.classList.add('show');
+  setTimeout(function() { toast.classList.remove('show'); }, 4000);
+}
+</script>
+</body>
+</html>
