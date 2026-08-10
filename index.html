@@ -977,9 +977,9 @@ function updateCalcResult() {
     if (!priceData) return;
     var isFree = item.free;
     var qty = isFree ? 1 : (sel.qty || 1);
-    var charge = isFree ? 0 : discountPrice(priceData.origBase) * qty + (priceData.origVar > 0 ? discountPrice(priceData.origVar) * qty : 0);
+    var charge = isFree ? 0 : discountPrice(priceData.origBase) + (priceData.origVar > 0 ? discountPrice(priceData.origVar) * qty : 0);
     charge = Math.round(charge * 10) / 10;
-    var origCharge = isFree ? 0 : priceData.origBase * qty + (priceData.origVar > 0 ? priceData.origVar * qty : 0);
+    var origCharge = isFree ? 0 : priceData.origBase + (priceData.origVar > 0 ? priceData.origVar * qty : 0);
     origCharge = Math.round(origCharge * 10) / 10;
     totalCharge += charge;
     totalOrig += origCharge;
