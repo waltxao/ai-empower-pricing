@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>后台管理 - 智能化赋能服务报价</title>
+<style>
+:root {
+  --black: #000000;
+  --dark: #1A1A1A;
+  --gray-dark: #333333;
+  --gray: #7F8C8D;
+  --gray-light: #E0E0E0;
+  --bg-gray: #F8F9FA;
+  --bg-white: #FFFFFF;
+  --yellow: #FFCC00;
+  --yellow-dark: #E6B800;
+  --red: #E74C3C;
+  --text-dark: #1A1A1A;
+  --text-gray: #7F8C8D;
+  --radius: 8px;
+  --radius-lg: 16px;
+  --font: 'Noto Sans CJK SC', 'Microsoft YaHei', 'PingFang SC', sans-serif;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: var(--font); background: var(--bg-gray); color: var(--text-dark); font-size: 14px; line-height: 1.6; }
+a { text-decoration: none; color: inherit; }
+
+/* ===== 登录页 ===== */
+#loginScreen {
+  position: fixed; inset: 0;
+  background: linear-gradient(135deg, #000000 0%, #1A1A1A 50%, #000000 100%);
+  display: flex; align-items: center; justify-content: center; z-index: 999;
+}
+#loginScreen::before {
+  content: ''; position: absolute; top: -30%; right: -10%;
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(255,204,0,0.12), transparent 70%);
+  border-radius: 50%;
+}
+.login-box {
+  background: #fff; border-radius: var(--radius-lg); padding: 40px;
+  width: 380px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  position: relative; z-index: 1;
+}
+.login-box h1 { font-size: 24px; font-weight: 700; margin-bottom: 6px; }
+.login-box .sub { color: var(--text-gray); font-size: 13px; margin-bottom: 24px; }
+.login-box input {
+  width: 100%; padding: 12px 16px; border: 2px solid var(--gray-light);
+  border-radius: var(--radius); font-size: 15px; font-family: var(--font);
+  margin-bottom: 12px; transition: border-color 0.2s;
+}
+.login-box input:focus { outline: none; border-color: var(--black); }
+.login-box .login-btn {
+  width: 100%; padding: 12px; background: var(--black); color: #fff;
+  border: none; border-radius: var(--radius); font-size: 15px; font-weight: 600;
+  cursor: pointer; font-family: var(--font); transition: background 0.2s;
+}
+.login-box .login-btn:hover { background: var(--gray-dark); }
+.login-hint { color: var(--red); font-size: 13px; margin-top: 12px; min-height: 20px; }
+.login-back { display: block; margin-top: 16px; font-size: 13px; color: var(--text-gray); }
+.login-back:hover { color: var(--yellow-dark); }
+
+/* ===== 顶部操作栏 ===== */
+.topbar {
+  position: fixed; top: 0; left: 0; right: 0; height: 56px;
+  background: rgba(0,0,0,0.97); backdrop-filter: blur(10px);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+.topbar-logo { color: #fff; font-size: 16px; font-weight: 700; letter-spacing: 0.5px; }
+.topbar-logo span { color: var(--yellow); }
+.topbar-right { display: flex; gap: 10px; align-items: center; }
+.topbar-right .preview-link {
+  color: rgba(255,255,255,0.6); font-size: 13px; padding: 6px 12px;
+  border-radius: 6px; transition: all 0.2s;
+}
+.topbar-right .preview-link:hover { color: var(--yellow); background: rgba(255,255,255,0.1); }
+
+/* ===== 按钮 ===== */
+.btn {
+  padding: 8px 18px; border: none; border-radius: var(--radius);
+  font-size: 13px; font-weight: 600; cursor: pointer; font-family: var(--font);
+  transition: all 0.2s; display: inline-flex; align-items: center; gap: 4px;
+}
+.btn-black { background: var(--black); color: #fff; }
+.btn-black:hover { background: var(--gray-dark); }
+.btn-yellow { background: var(--yellow); color: #000; }
+.btn-yellow:hover { background: var(--yellow-dark); }
+.btn-outline { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,0.3); }
+.btn-outline:hover { border-color: var(--yellow); color: var(--yellow); }
+.btn-outline-dark { background: transparent; color: var(--gray-dark); border: 1px solid var(--gray-light); }
+.btn-outline-dark:hover { border-color: var(--black); color: var(--black); }
+.btn-sm { padding: 5px 12px; font-size: 12px; }
+.btn-danger { background: transparent; color: var(--red); border: 1px solid var(--red); }
+.btn-danger:hover { background: var(--red); color: #fff; }
+.btn-icon {
+  width: 28px; height: 28px; border: 1px solid var(--gray-light); background: #fff;
+  border-radius: 6px; cursor: pointer; font-size: 16px; color: var(--red);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  transition: all 0.15s; padding: 0;
+}
+.btn-icon:hover { background: var(--red); color: #fff; border-color: var(--red); }
+.btn-move {
+  width: 28px; height: 28px; border: 1px solid var(--gray-light); background: #fff;
+  border-radius: 6px; cursor: pointer; font-size: 14px; color: var(--gray-dark);
+  display: flex; align-items: center; justify-content: center; transition: all 0.15s; padding: 0;
+}
+.btn-move:hover { background: var(--gray-light); border-color: var(--gray-dark); }
+.btn-move:disabled { opacity: 0.3; cursor: not-allowed; }
+
+/* ===== 布局 ===== */
+.admin-body { display: flex; margin-top: 56px; min-height: calc(100vh - 56px); }
+.sidebar {
+  width: 200px; background: #fff; border-right: 1px solid var(--gray-light);
+  padding: 16px 0; position: sticky; top: 56px; height: calc(100vh - 56px);
+  overflow-y: auto; flex-shrink: 0;
+}
+.nav-item {
+  display: block; padding: 12px 20px; color: var(--text-dark); font-size: 14px;
+  font-weight: 500; border-left: 3px solid transparent; transition: all 0.2s; cursor: pointer;
+}
+.nav-item:hover { background: var(--bg-gray); }
+.nav-item.active {
+  border-left-color: var(--yellow); background: #FFF8E1;
+  color: var(--black); font-weight: 600;
+}
+.content { flex: 1; padding: 24px 32px; max-width: 1000px; }
+
+/* ===== 编辑区域 ===== */
+.edit-section {
+  background: #fff; border-radius: var(--radius-lg); padding: 24px;
+  margin-bottom: 20px; box-shadow: 0 1px 6px rgba(0,0,0,0.05);
+}
+.edit-section h2 {
+  font-size: 18px; font-weight: 700; margin-bottom: 4px;
+  padding-left: 14px; border-left: 4px solid var(--yellow);
+}
+.edit-section .section-hint { font-size: 12px; color: var(--text-gray); margin-bottom: 16px; padding-left: 18px; }
+.edit-section hr { border: none; border-top: 1px solid var(--gray-light); margin: 16px 0; }
+
+/* ===== 表单元素 ===== */
+.field-group { margin-bottom: 14px; }
+.field-group > label {
+  display: block; font-size: 13px; font-weight: 600; color: var(--text-dark); margin-bottom: 5px;
+}
+.field-group input[type="text"],
+.field-group input[type="number"],
+.field-group input[type="password"],
+.field-group textarea,
+.field-group select {
+  width: 100%; padding: 8px 12px; border: 1px solid var(--gray-light);
+  border-radius: var(--radius); font-size: 14px; font-family: var(--font);
+  color: var(--text-dark); background: var(--bg-gray); transition: border-color 0.2s;
+}
+.field-group input:focus,
+.field-group textarea:focus,
+.field-group select:focus { outline: none; border-color: var(--black); background: #fff; }
+.field-group textarea { resize: vertical; min-height: 64px; }
+
+.field-inline { display: flex; align-items: center; gap: 8px; }
+.field-inline label { font-size: 12px; color: var(--text-gray); white-space: nowrap; min-width: 50px; }
+.field-inline input {
+  flex: 1; padding: 6px 10px; border: 1px solid var(--gray-light);
+  border-radius: var(--radius); font-size: 13px; font-family: var(--font); background: #fff;
+}
+.field-inline input:focus { outline: none; border-color: var(--black); }
+
+.field-row { display: flex; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }
+.field-row .field-group { flex: 1; min-width: 150px; margin-bottom: 0; }
+
+/* ===== Hero卡片编辑 ===== */
+.card-edit {
+  background: var(--bg-gray); border-radius: var(--radius); padding: 16px;
+  margin-bottom: 12px; border: 1px solid var(--gray-light);
+}
+.card-edit-header { font-size: 13px; font-weight: 600; color: var(--gray-dark); margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; }
+
+/* ===== 流程步骤编辑 ===== */
+.step-edit {
+  background: var(--bg-gray); border-radius: var(--radius); padding: 16px;
+  margin-bottom: 12px; border: 1px solid var(--gray-light);
+}
+.step-edit-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.step-edit-header .step-num-label { font-size: 13px; font-weight: 600; }
+.step-edit-header .step-actions { margin-left: auto; display: flex; gap: 6px; }
+.step-num-input { width: 60px; padding: 4px 8px; border: 1px solid var(--gray-light); border-radius: 6px; font-size: 13px; font-family: var(--font); }
+
+/* ===== 服务Tab ===== */
+.service-tabs { display: flex; gap: 4px; margin-bottom: 16px; border-bottom: 2px solid var(--gray-light); }
+.service-tab {
+  padding: 10px 20px; font-size: 14px; font-weight: 600; background: transparent;
+  border: none; cursor: pointer; color: var(--text-gray); border-bottom: 2px solid transparent;
+  margin-bottom: -2px; font-family: var(--font); border-radius: 6px 6px 0 0; transition: all 0.2s;
+}
+.service-tab:hover { background: var(--bg-gray); color: var(--gray-dark); }
+.service-tab.active { color: #fff; background: var(--black); border-bottom-color: var(--yellow); }
+
+/* ===== 服务项目卡片 ===== */
+.item-card {
+  background: var(--bg-gray); border-radius: var(--radius); padding: 16px;
+  margin-bottom: 16px; border: 1px solid var(--gray-light);
+}
+.item-card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+.item-card-header .item-id {
+  font-size: 14px; font-weight: 700; color: var(--black);
+  background: var(--yellow); padding: 2px 10px; border-radius: 12px;
+}
+.item-card-header .item-name-display { font-size: 14px; font-weight: 600; }
+.item-card-actions { display: flex; gap: 6px; margin-left: auto; }
+
+/* ===== 数组编辑器 ===== */
+.array-editor { margin-bottom: 12px; }
+.array-label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+.array-row { display: flex; gap: 6px; margin-bottom: 6px; align-items: center; }
+.array-row input {
+  flex: 1; padding: 6px 10px; border: 1px solid var(--gray-light);
+  border-radius: var(--radius); font-size: 13px; font-family: var(--font); background: #fff;
+}
+.array-row input:focus { outline: none; border-color: var(--black); }
+
+/* ===== 价格编辑器 ===== */
+.price-editor {
+  background: #fff; border-radius: var(--radius); padding: 12px;
+  margin-bottom: 10px; border: 1px solid var(--gray-light);
+}
+.price-toggle { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; cursor: pointer; }
+.price-toggle input { width: 16px; height: 16px; accent-color: var(--black); }
+.price-fields { display: flex; gap: 12px; margin-top: 8px; flex-wrap: wrap; }
+.price-fields .field-inline { flex: 1; min-width: 120px; }
+
+/* ===== 复选框 ===== */
+.checkbox-group { display: flex; align-items: center; gap: 6px; margin-top: 4px; }
+.checkbox-group input { width: 16px; height: 16px; accent-color: var(--black); }
+.checkbox-group label { font-size: 13px; font-weight: 600; cursor: pointer; }
+
+/* ===== Toast ===== */
+.toast {
+  position: fixed; top: 72px; left: 50%;
+  transform: translateX(-50%) translateY(-120px);
+  background: var(--yellow); color: #000; padding: 12px 24px;
+  border-radius: var(--radius); font-size: 14px; font-weight: 600;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.2); z-index: 1000;
+  transition: transform 0.3s ease; white-space: pre-line;
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+.toast.error { background: var(--red); color: #fff; }
+
+/* ===== 加载错误 ===== */
+.load-error { text-align: center; padding: 60px 20px; }
+.load-error h3 { color: var(--red); font-size: 18px; margin-bottom: 12px; }
+.load-error p { color: var(--text-gray); font-size: 14px; margin-bottom: 20px; line-height: 1.8; }
+.load-error .btn-group { display: flex; gap: 12px; justify-content: center; }
+
+/* ===== 响应式 ===== */
+@media (max-width: 768px) {
+  .sidebar { width: 160px; }
+  .content { padding: 16px; }
+  .topbar { padding: 0 12px; }
+  .topbar-right .preview-link { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== 登录页 ===== -->
+<div id="loginScreen">
+  <div class="login-box">
+    <h1>后台管理</h1>
+    <p class="sub">智能化赋能服务报价 · 管理后台</p>
+    <input type="password" id="pwdInput" placeholder="请输入管理密码" onkeydown="if(event.key==='Enter')checkPwd()">
+    <button class="login-btn" onclick="checkPwd()">进入管理</button>
+    <p class="login-hint" id="loginHint"></p>
+    <a href="index.html" class="login-back">返回前台首页</a>
+  </div>
+</div>
+
+<!-- ===== 管理界面 ===== -->
+<div id="adminApp" style="display:none;">
+  <!-- 顶部操作栏 -->
+  <header class="topbar">
+    <span class="topbar-logo">智能化赋能 <span>·</span> 后台管理</span>
+    <div class="topbar-right">
+      <a href="index.html" target="_blank" class="preview-link">预览前台</a>
+      <button class="btn btn-outline btn-sm" onclick="document.getElementById('importFile').click()">导入 data.json</button>
+      <input type="file" id="importFile" accept=".json" style="display:none" onchange="importJson(event)">
+      <button class="btn btn-yellow btn-sm" onclick="exportJson()">导出 data.json</button>
+    </div>
+  </header>
+
+  <div class="admin-body">
+    <!-- 左侧导航 -->
+    <nav class="sidebar" id="sidebar">
+      <a class="nav-item active" data-target="sec-hero" onclick="navTo('sec-hero')">Hero区域</a>
+      <a class="nav-item" data-target="sec-flow" onclick="navTo('sec-flow')">服务流程</a>
+      <a class="nav-item" data-target="sec-pricing" onclick="navTo('sec-pricing')">报价表区域</a>
+      <a class="nav-item" data-target="sec-services" onclick="navTo('sec-services')">服务数据</a>
+      <a class="nav-item" data-target="sec-calc" onclick="navTo('sec-calc')">计算器区域</a>
+      <a class="nav-item" data-target="sec-contact" onclick="navTo('sec-contact')">联系区域</a>
+      <a class="nav-item" data-target="sec-footer" onclick="navTo('sec-footer')">底部Footer</a>
+    </nav>
+    <!-- 右侧编辑区 -->
+    <main class="content" id="content"></main>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ========== 配置 ==========
+var PASSWORD = 'walt2026';
+var currentServiceTab = 'dev';
+var data = null;
+
+// ========== 工具函数 ==========
+function esc(s) {
+  if (s == null) return '';
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function showToast(msg, type) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (type === 'error' ? ' error' : '');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(function() { t.className = 'toast'; }, 3500);
+}
+
+// ========== 密码登录 ==========
+function checkPwd() {
+  var pwd = document.getElementById('pwdInput').value;
+  if (pwd === PASSWORD) {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('adminApp').style.display = '';
+    loadData();
+  } else {
+    document.getElementById('loginHint').textContent = '密码错误，请重新输入';
+    document.getElementById('pwdInput').value = '';
+    document.getElementById('pwdInput').focus();
+  }
+}
+
+// ========== 导航 ==========
+function navTo(id) {
+  var el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  document.querySelectorAll('.nav-item').forEach(function(n) { n.classList.remove('active'); });
+  var navEl = document.querySelector('.nav-item[data-target="' + id + '"]');
+  if (navEl) navEl.classList.add('active');
+}
+
+// ========== 数据加载 ==========
+function loadData() {
+  fetch('data.json?t=' + Date.now())
+    .then(function(r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    })
+    .then(function(d) {
+      data = d;
+      normalizeData();
+      renderAll();
+      showToast('数据加载成功');
+    })
+    .catch(function(e) {
+      showLoadError();
+    });
+}
+
+function normalizeData() {
+  if (!data.hero) data.hero = { title: '', subtitle: '', cards: [] };
+  if (!data.hero.cards) data.hero.cards = [];
+  if (!data.flow) data.flow = { title: '', desc: '', steps: [] };
+  if (!data.flow.steps) data.flow.steps = [];
+  if (!data.pricing) data.pricing = { title: '', desc: '' };
+  if (!data.calculator) data.calculator = { title: '', desc: '' };
+  if (!data.contact) data.contact = { title: '', desc: '', im_group: '' };
+  if (!data.footer) data.footer = { line1: '', line2: '', note: '' };
+  if (!data.services) data.services = {};
+  ['dev', 'consult', 'bi'].forEach(function(k) {
+    if (!data.services[k]) data.services[k] = { title: '', intro: '', items: [] };
+    if (!data.services[k].items) data.services[k].items = [];
+    data.services[k].items.forEach(function(item) {
+      if (item.details === undefined) item.details = [];
+      if (item.deliverables === undefined) item.deliverables = [];
+      if (item.perUse === undefined) item.perUse = null;
+      if (item.monthly === undefined) item.monthly = null;
+      if (item.free === undefined) item.free = false;
+      if (item.mode === undefined) item.mode = null;
+      if (item.modeLabel === undefined) item.modeLabel = '';
+      if (item.cat2 === undefined) item.cat2 = '';
+      if (item.desc === undefined) item.desc = '';
+      if (item.name === undefined) item.name = '';
+      if (item.id === undefined) item.id = '';
+    });
+  });
+}
+
+function showLoadError() {
+  document.getElementById('content').innerHTML =
+    '<div class="load-error">' +
+    '<h3>无法加载 data.json</h3>' +
+    '<p>请确保 data.json 文件与本页面在同一目录下。<br>您可以导入已有的 data.json 文件，或使用空数据开始编辑后导出。</p>' +
+    '<div class="btn-group">' +
+    '<button class="btn btn-yellow" onclick="document.getElementById(\'importFile\').click()">导入 data.json</button>' +
+    '<button class="btn btn-black" onclick="initEmptyData()">使用空数据开始</button>' +
+    '</div></div>';
+}
+
+function initEmptyData() {
+  data = {
+    hero: { title: '', subtitle: '', cards: [
+      { label: '', value: '', small: '' },
+      { label: '', value: '', small: '' },
+      { label: '', value: '', small: '' },
+      { label: '', value: '', small: '' }
+    ]},
+    flow: { title: '', desc: '', steps: [{ num: 1, title: '', desc: '', note: '' }] },
+    pricing: { title: '', desc: '' },
+    calculator: { title: '', desc: '' },
+    contact: { title: '', desc: '', im_group: '' },
+    footer: { line1: '', line2: '', note: '' },
+    services: {
+      dev: { title: 'AI开发项目', intro: '', items: [] },
+      consult: { title: '咨询服务', intro: '', items: [] },
+      bi: { title: 'BI报表服务', intro: '', items: [] }
+    }
+  };
+  renderAll();
+  showToast('已初始化空数据，请开始编辑');
+}
+
+// ========== 渲染全部 ==========
+function renderAll() {
+  document.getElementById('content').innerHTML =
+    renderHeroSection() +
+    renderFlowSection() +
+    renderPricingSection() +
+    renderServicesSection() +
+    renderCalcSection() +
+    renderContactSection() +
+    renderFooterSection();
+}
+
+// ========== A. Hero区域 ==========
+function renderHeroSection() {
+  var h = data.hero;
+  var html = '<section id="sec-hero" class="edit-section">';
+  html += '<h2>Hero区域</h2>';
+  html += '<p class="section-hint">首页顶部标题与卡片内容</p>';
+  html += '<div class="field-group"><label>标题</label><input type="text" value="' + esc(h.title) + '" oninput="data.hero.title=this.value"></div>';
+  html += '<div class="field-group"><label>副标题</label><input type="text" value="' + esc(h.subtitle) + '" oninput="data.hero.subtitle=this.value"></div>';
+  html += '<label style="font-size:13px;font-weight:600;display:block;margin-bottom:8px;">卡片列表（共 ' + h.cards.length + ' 个）</label>';
+  h.cards.forEach(function(card, i) {
+    html += '<div class="card-edit">';
+    html += '<div class="card-edit-header"><span>卡片 ' + (i + 1) + '</span></div>';
+    html += '<div class="field-row">';
+    html += '<div class="field-group"><label>label 标签</label><input type="text" value="' + esc(card.label) + '" oninput="data.hero.cards[' + i + '].label=this.value"></div>';
+    html += '<div class="field-group"><label>value 值</label><input type="text" value="' + esc(card.value) + '" oninput="data.hero.cards[' + i + '].value=this.value"></div>';
+    html += '<div class="field-group"><label>small 小字（可为空）</label><input type="text" value="' + esc(card.small) + '" oninput="data.hero.cards[' + i + '].small=this.value"></div>';
+    html += '</div>';
+    html += '<button class="btn btn-sm btn-danger" onclick="removeHeroCard(' + i + ')">删除卡片</button>';
+    html += '</div>';
+  });
+  html += '<button class="btn btn-sm btn-yellow" onclick="addHeroCard()">+ 添加卡片</button>';
+  html += '</section>';
+  return html;
+}
+
+function addHeroCard() {
+  data.hero.cards.push({ label: '', value: '', small: '' });
+  renderAll();
+  navTo('sec-hero');
+}
+
+function removeHeroCard(i) {
+  data.hero.cards.splice(i, 1);
+  renderAll();
+  navTo('sec-hero');
+}
+
+// ========== B. 服务流程 ==========
+function renderFlowSection() {
+  var f = data.flow;
+  var html = '<section id="sec-flow" class="edit-section">';
+  html += '<h2>服务流程</h2>';
+  html += '<p class="section-hint">流程步骤编辑（desc字段支持 &lt;br&gt; 标签换行）</p>';
+  html += '<div class="field-group"><label>区域标题</label><input type="text" value="' + esc(f.title) + '" oninput="data.flow.title=this.value"></div>';
+  html += '<div class="field-group"><label>区域描述</label><textarea oninput="data.flow.desc=this.value">' + esc(f.desc) + '</textarea></div>';
+  html += '<label style="font-size:13px;font-weight:600;display:block;margin-bottom:8px;">步骤列表（共 ' + f.steps.length + ' 步）</label>';
+  f.steps.forEach(function(step, i) {
+    html += '<div class="step-edit">';
+    html += '<div class="step-edit-header">';
+    html += '<span class="step-num-label">步骤</span>';
+    html += '<input type="number" class="step-num-input" value="' + step.num + '" oninput="data.flow.steps[' + i + '].num=parseInt(this.value)||1">';
+    html += '<div class="step-actions">';
+    html += '<button class="btn-move" onclick="moveFlowStep(' + i + ',-1)"' + (i === 0 ? ' disabled' : '') + '>&#8593;</button>';
+    html += '<button class="btn-move" onclick="moveFlowStep(' + i + ',1)"' + (i === f.steps.length - 1 ? ' disabled' : '') + '>&#8595;</button>';
+    html += '<button class="btn-icon" onclick="removeFlowStep(' + i + ')">&times;</button>';
+    html += '</div>';
+    html += '</div>';
+    html += '<div class="field-group"><label>标题</label><input type="text" value="' + esc(step.title) + '" oninput="data.flow.steps[' + i + '].title=this.value"></div>';
+    html += '<div class="field-group"><label>描述（支持 &lt;br&gt; 换行）</label><textarea oninput="data.flow.steps[' + i + '].desc=this.value">' + esc(step.desc) + '</textarea></div>';
+    html += '<div class="field-group"><label>备注（可为空）</label><input type="text" value="' + esc(step.note) + '" oninput="data.flow.steps[' + i + '].note=this.value"></div>';
+    html += '</div>';
+  });
+  html += '<button class="btn btn-sm btn-yellow" onclick="addFlowStep()">+ 添加步骤</button>';
+  html += '</section>';
+  return html;
+}
+
+function addFlowStep() {
+  data.flow.steps.push({ num: data.flow.steps.length + 1, title: '', desc: '', note: '' });
+  renderAll();
+  navTo('sec-flow');
+}
+
+function removeFlowStep(i) {
+  data.flow.steps.splice(i, 1);
+  renderAll();
+  navTo('sec-flow');
+}
+
+function moveFlowStep(i, dir) {
+  var j = i + dir;
+  if (j < 0 || j >= data.flow.steps.length) return;
+  var tmp = data.flow.steps[i];
+  data.flow.steps[i] = data.flow.steps[j];
+  data.flow.steps[j] = tmp;
+  renderAll();
+  navTo('sec-flow');
+}
+
+// ========== C. 报价表区域 ==========
+function renderPricingSection() {
+  var p = data.pricing;
+  var html = '<section id="sec-pricing" class="edit-section">';
+  html += '<h2>报价表区域</h2>';
+  html += '<p class="section-hint">报价表的标题与描述文字</p>';
+  html += '<div class="field-group"><label>区域标题</label><input type="text" value="' + esc(p.title) + '" oninput="data.pricing.title=this.value"></div>';
+  html += '<div class="field-group"><label>区域描述</label><textarea oninput="data.pricing.desc=this.value">' + esc(p.desc) + '</textarea></div>';
+  html += '</section>';
+  return html;
+}
+
+// ========== D. 服务数据编辑 ==========
+function renderServicesSection() {
+  var html = '<section id="sec-services" class="edit-section">';
+  html += '<h2>服务数据编辑</h2>';
+  html += '<p class="section-hint">三个类别的服务项目，支持新增、删除、上下排序</p>';
+  // Tab切换
+  html += '<div class="service-tabs">';
+  ['dev', 'consult', 'bi'].forEach(function(k) {
+    var active = currentServiceTab === k ? ' active' : '';
+    html += '<button class="service-tab' + active + '" onclick="switchServiceTab(\'' + k + '\')">' + esc(data.services[k].title || k) + '</button>';
+  });
+  html += '</div>';
+  // 当前类别
+  var svc = data.services[currentServiceTab];
+  html += '<div class="field-group"><label>类别标题</label><input type="text" value="' + esc(svc.title) + '" oninput="data.services.' + currentServiceTab + '.title=this.value"></div>';
+  html += '<div class="field-group"><label>类别介绍</label><textarea oninput="data.services.' + currentServiceTab + '.intro=this.value">' + esc(svc.intro) + '</textarea></div>';
+  html += '<hr>';
+  html += '<label style="font-size:14px;font-weight:700;display:block;margin-bottom:12px;">服务项目（共 ' + svc.items.length + ' 项）</label>';
+  svc.items.forEach(function(item, idx) {
+    html += renderItemCard(currentServiceTab, idx, item);
+  });
+  html += '<button class="btn btn-yellow" onclick="addServiceItem(\'' + currentServiceTab + '\')">+ 添加服务项目</button>';
+  html += '</section>';
+  return html;
+}
+
+function switchServiceTab(k) {
+  currentServiceTab = k;
+  renderAll();
+  navTo('sec-services');
+}
+
+function renderItemCard(catKey, idx, item) {
+  var html = '<div class="item-card">';
+  // 头部
+  html += '<div class="item-card-header">';
+  html += '<span class="item-id">' + esc(item.id || 'NEW') + '</span>';
+  html += '<span class="item-name-display">' + esc(item.name || '未命名') + '</span>';
+  html += '<div class="item-card-actions">';
+  html += '<button class="btn-move" onclick="moveServiceItem(\'' + catKey + '\',' + idx + ',-1)"' + (idx === 0 ? ' disabled' : '') + '>&#8593;</button>';
+  html += '<button class="btn-move" onclick="moveServiceItem(\'' + catKey + '\',' + idx + ',1)"' + (idx === data.services[catKey].items.length - 1 ? ' disabled' : '') + '>&#8595;</button>';
+  html += '<button class="btn-icon" onclick="removeServiceItem(\'' + catKey + '\',' + idx + ')">&times;</button>';
+  html += '</div>';
+  html += '</div>';
+
+  // 基本字段
+  html += '<div class="field-row">';
+  html += '<div class="field-group"><label>ID</label><input type="text" value="' + esc(item.id) + '" oninput="data.services.' + catKey + '.items[' + idx + '].id=this.value"></div>';
+  html += '<div class="field-group"><label>分类标签 (cat2)</label><input type="text" value="' + esc(item.cat2) + '" oninput="data.services.' + catKey + '.items[' + idx + '].cat2=this.value"></div>';
+  html += '<div class="field-group"><label>品项名称 (name)</label><input type="text" value="' + esc(item.name) + '" oninput="data.services.' + catKey + '.items[' + idx + '].name=this.value"></div>';
+  html += '</div>';
+
+  // 模式
+  html += '<div class="field-row">';
+  html += '<div class="field-group"><label>模式 (mode)</label><select onchange="setMode(\'' + catKey + '\',' + idx + ',this.value)">';
+  html += '<option value=""' + (!item.mode ? ' selected' : '') + '>无</option>';
+  html += '<option value="A"' + (item.mode === 'A' ? ' selected' : '') + '>A</option>';
+  html += '<option value="B"' + (item.mode === 'B' ? ' selected' : '') + '>B</option>';
+  html += '<option value="C"' + (item.mode === 'C' ? ' selected' : '') + '>C</option>';
+  html += '</select></div>';
+  html += '<div class="field-group"><label>模式标签 (modeLabel)</label><input type="text" value="' + esc(item.modeLabel) + '" oninput="data.services.' + catKey + '.items[' + idx + '].modeLabel=this.value"></div>';
+  html += '</div>';
+
+  // 描述
+  html += '<div class="field-group"><label>描述 (desc)</label><textarea oninput="data.services.' + catKey + '.items[' + idx + '].desc=this.value">' + esc(item.desc) + '</textarea></div>';
+
+  // details数组
+  html += renderArrayEditor(catKey, idx, 'details', '服务工序 (details)');
+
+  // deliverables数组
+  html += renderArrayEditor(catKey, idx, 'deliverables', '交付物类型 (deliverables)');
+
+  // 价格编辑器
+  html += renderPriceEditor(catKey, idx, 'perUse', '按次计费 (perUse)');
+  html += renderPriceEditor(catKey, idx, 'monthly', '包月计费 (monthly)');
+
+  // 免费
+  html += '<div class="checkbox-group">';
+  html += '<input type="checkbox" id="free-' + catKey + '-' + idx + '"' + (item.free ? ' checked' : '') + ' onchange="data.services.' + catKey + '.items[' + idx + '].free=this.checked">';
+  html += '<label for="free-' + catKey + '-' + idx + '">是否免费 (free)</label>';
+  html += '</div>';
+
+  html += '</div>';
+  return html;
+}
+
+// 数组编辑器
+function renderArrayEditor(catKey, idx, field, label) {
+  var arr = data.services[catKey].items[idx][field] || [];
+  var html = '<div class="array-editor">';
+  html += '<label class="array-label">' + label + '（' + arr.length + ' 项）</label>';
+  arr.forEach(function(val, i) {
+    html += '<div class="array-row">';
+    html += '<input type="text" value="' + esc(val) + '" oninput="data.services.' + catKey + '.items[' + idx + '].' + field + '[' + i + ']=this.value">';
+    html += '<button class="btn-icon" onclick="removeArrayItem(\'' + catKey + '\',' + idx + ',\'' + field + '\',' + i + ')">&times;</button>';
+    html += '</div>';
+  });
+  html += '<button class="btn btn-sm btn-outline-dark" onclick="addArrayItem(\'' + catKey + '\',' + idx + ',\'' + field + '\')">+ 添加</button>';
+  html += '</div>';
+  return html;
+}
+
+function addArrayItem(catKey, idx, field) {
+  var arr = data.services[catKey].items[idx][field];
+  if (!arr) { arr = []; data.services[catKey].items[idx][field] = arr; }
+  arr.push('');
+  renderAll();
+  navTo('sec-services');
+}
+
+function removeArrayItem(catKey, idx, field, i) {
+  data.services[catKey].items[idx][field].splice(i, 1);
+  renderAll();
+  navTo('sec-services');
+}
+
+// 价格编辑器
+function renderPriceEditor(catKey, idx, priceKey, label) {
+  var item = data.services[catKey].items[idx];
+  var p = item[priceKey];
+  var enabled = p !== null;
+  var html = '<div class="price-editor">';
+  html += '<label class="price-toggle">';
+  html += '<input type="checkbox"' + (enabled ? ' checked' : '') + ' onchange="togglePrice(\'' + catKey + '\',' + idx + ',\'' + priceKey + '\',this.checked)"> ' + label;
+  html += '</label>';
+  html += '<div class="price-fields" style="display:' + (enabled ? 'flex' : 'none') + ';">';
+  html += '<div class="field-inline"><label>基础费</label><input type="number" step="0.1" value="' + (enabled ? p.origBase : 0) + '" oninput="data.services.' + catKey + '.items[' + idx + '].' + priceKey + '.origBase=parseFloat(this.value)||0"></div>';
+  html += '<div class="field-inline"><label>变量费</label><input type="number" step="0.1" value="' + (enabled ? p.origVar : 0) + '" oninput="data.services.' + catKey + '.items[' + idx + '].' + priceKey + '.origVar=parseFloat(this.value)||0"></div>';
+  html += '<div class="field-inline"><label>单位</label><input type="text" value="' + (enabled ? esc(p.unit) : '') + '" oninput="data.services.' + catKey + '.items[' + idx + '].' + priceKey + '.unit=this.value"></div>';
+  html += '</div>';
+  html += '</div>';
+  return html;
+}
+
+function togglePrice(catKey, idx, priceKey, enabled) {
+  if (enabled) {
+    data.services[catKey].items[idx][priceKey] = { origBase: 0, origVar: 0, unit: '' };
+  } else {
+    data.services[catKey].items[idx][priceKey] = null;
+  }
+  renderAll();
+  navTo('sec-services');
+}
+
+function setMode(catKey, idx, val) {
+  var item = data.services[catKey].items[idx];
+  item.mode = val || null;
+  item.modeLabel = val ? '模式' + val : '';
+  renderAll();
+  navTo('sec-services');
+}
+
+function addServiceItem(catKey) {
+  data.services[catKey].items.push({
+    id: 'NEW', mode: null, modeLabel: '', cat2: '', name: '新服务项目',
+    desc: '', details: [], deliverables: [],
+    perUse: null, monthly: null, free: false
+  });
+  renderAll();
+  navTo('sec-services');
+}
+
+function removeServiceItem(catKey, idx) {
+  data.services[catKey].items.splice(idx, 1);
+  renderAll();
+  navTo('sec-services');
+}
+
+function moveServiceItem(catKey, idx, dir) {
+  var j = idx + dir;
+  if (j < 0 || j >= data.services[catKey].items.length) return;
+  var items = data.services[catKey].items;
+  var tmp = items[idx];
+  items[idx] = items[j];
+  items[j] = tmp;
+  renderAll();
+  navTo('sec-services');
+}
+
+// ========== E. 计算器区域 ==========
+function renderCalcSection() {
+  var c = data.calculator;
+  var html = '<section id="sec-calc" class="edit-section">';
+  html += '<h2>计算器区域</h2>';
+  html += '<p class="section-hint">价格计算器的标题与描述</p>';
+  html += '<div class="field-group"><label>标题</label><input type="text" value="' + esc(c.title) + '" oninput="data.calculator.title=this.value"></div>';
+  html += '<div class="field-group"><label>描述</label><textarea oninput="data.calculator.desc=this.value">' + esc(c.desc) + '</textarea></div>';
+  html += '</section>';
+  return html;
+}
+
+// ========== F. 联系区域 ==========
+function renderContactSection() {
+  var c = data.contact;
+  var html = '<section id="sec-contact" class="edit-section">';
+  html += '<h2>联系区域</h2>';
+  html += '<p class="section-hint">联系与下单区域内容</p>';
+  html += '<div class="field-group"><label>标题</label><input type="text" value="' + esc(c.title) + '" oninput="data.contact.title=this.value"></div>';
+  html += '<div class="field-group"><label>描述</label><textarea oninput="data.contact.desc=this.value">' + esc(c.desc) + '</textarea></div>';
+  html += '<div class="field-group"><label>IM群组</label><input type="text" value="' + esc(c.im_group) + '" oninput="data.contact.im_group=this.value"></div>';
+  html += '</section>';
+  return html;
+}
+
+// ========== G. 底部Footer ==========
+function renderFooterSection() {
+  var f = data.footer;
+  var html = '<section id="sec-footer" class="edit-section">';
+  html += '<h2>底部Footer</h2>';
+  html += '<p class="section-hint">底部三行文字内容</p>';
+  html += '<div class="field-group"><label>第一行 (line1)</label><input type="text" value="' + esc(f.line1) + '" oninput="data.footer.line1=this.value"></div>';
+  html += '<div class="field-group"><label>第二行 (line2)</label><input type="text" value="' + esc(f.line2) + '" oninput="data.footer.line2=this.value"></div>';
+  html += '<div class="field-group"><label>备注 (note)</label><textarea oninput="data.footer.note=this.value">' + esc(f.note) + '</textarea></div>';
+  html += '</section>';
+  return html;
+}
+
+// ========== 导出 data.json ==========
+function exportJson() {
+  // 深拷贝并清理
+  var exportData = JSON.parse(JSON.stringify(data));
+  // 确保mode为空字符串时导出null
+  ['dev', 'consult', 'bi'].forEach(function(k) {
+    if (exportData.services[k] && exportData.services[k].items) {
+      exportData.services[k].items.forEach(function(item) {
+        if (item.mode === '') item.mode = null;
+        if (item.modeLabel === undefined) item.modeLabel = '';
+        if (item.free === undefined) item.free = false;
+      });
+    }
+  });
+  var json = JSON.stringify(exportData, null, 2);
+  var blob = new Blob([json], { type: 'application/json;charset=utf-8' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = 'data.json';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast('data.json 已导出');
+}
+
+// ========== 导入 data.json ==========
+function importJson(event) {
+  var file = event.target.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      var parsed = JSON.parse(e.target.result);
+      data = parsed;
+      normalizeData();
+      renderAll();
+      showToast('导入成功');
+    } catch (err) {
+      showToast('导入失败：JSON格式错误', 'error');
+    }
+  };
+  reader.readAsText(file, 'UTF-8');
+  event.target.value = '';
+}
+</script>
+</body>
+</html>

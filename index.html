@@ -361,9 +361,9 @@ a { text-decoration: none; color: inherit; }
 
 <!-- Hero区域 -->
 <section class="hero">
-  <h1>智能化赋能服务报价</h1>
-  <p>AI驱动 · 需求承接 · 灵活交付 · 为团队提供全流程AI赋能服务</p>
-  <div class="hero-cards">
+  <h1 id="heroTitle">智能化赋能服务报价</h1>
+  <p id="heroSubtitle">AI驱动 · 需求承接 · 灵活交付 · 为团队提供全流程AI赋能服务</p>
+  <div class="hero-cards" id="heroCards">
     <div class="hero-card">
       <div class="label">开发方式</div>
       <div class="value">AI驱动 <small>全流程辅助</small></div>
@@ -576,6 +576,79 @@ a { text-decoration: none; color: inherit; }
 <div class="toast" id="toast"></div>
 
 <script>
+// ========== 从 data.json 加载数据 ==========
+var siteData = null;
+function loadSiteData(cb) {
+  fetch('data.json')
+    .then(function(r) { return r.json(); })
+    .then(function(data) { siteData = data; cb(data); })
+    .catch(function() { cb(null); });
+}
+function applyData(data) {
+  if (!data) return;
+  if (data.hero) {
+    if (data.hero.title) document.getElementById('heroTitle').textContent = data.hero.title;
+    if (data.hero.subtitle) document.getElementById('heroSubtitle').textContent = data.hero.subtitle;
+    if (data.hero.cards) {
+      var hc = document.getElementById('heroCards');
+      hc.innerHTML = '';
+      data.hero.cards.forEach(function(c, i) {
+        var isLast = i === data.hero.cards.length - 1;
+        var style = isLast ? ' style="border-color: var(--green);"' : '';
+        var small = c.small ? ' <small>' + c.small + '</small>' : '';
+        hc.innerHTML += '<div class="hero-card"' + style + '><div class="label">' + c.label + '</div><div class="value">' + c.value + small + '</div></div>';
+      });
+    }
+  }
+  if (data.flow) {
+    var flowSec = document.querySelector('#flow .section-desc');
+    if (flowSec && data.flow.desc) flowSec.textContent = data.flow.desc;
+    if (data.flow.steps) {
+      var wrap = document.querySelector('#flow .flow-wrap');
+      wrap.innerHTML = '';
+      data.flow.steps.forEach(function(s) {
+        var noteHtml = s.note ? '<br><span class="flow-step-note">' + s.note + '</span>' : '';
+        wrap.innerHTML += '<div class="flow-step"><div class="flow-step-num">' + s.num + '</div><div class="flow-step-title">' + s.title + '</div><div class="flow-step-desc">' + s.desc + noteHtml + '</div></div>';
+        if (data.flow.steps.indexOf(s) < data.flow.steps.length - 1) wrap.innerHTML += '<div class="flow-arrow">→</div>';
+      });
+    }
+  }
+  if (data.pricing && data.pricing.desc) {
+    var pd = document.querySelector('#pricing .section-desc');
+    if (pd) pd.textContent = data.pricing.desc;
+  }
+  if (data.calculator && data.calculator.desc) {
+    var cd = document.querySelector('#calculator .section-desc');
+    if (cd) cd.textContent = data.calculator.desc;
+  }
+  if (data.contact) {
+    if (data.contact.desc) { var ct = document.querySelector('#contact .section-desc'); if (ct) ct.textContent = data.contact.desc; }
+    if (data.contact.im_group) { var ci = document.querySelector('#contact .ci-value'); if (ci) ci.textContent = '内部IM群组 ' + data.contact.im_group; }
+  }
+  if (data.footer) {
+    var fps = document.querySelectorAll('.footer p');
+    if (fps[0] && data.footer.line1) fps[0].textContent = data.footer.line1;
+    if (fps[1] && data.footer.line2) fps[1].textContent = data.footer.line2;
+    if (fps[2] && data.footer.note) fps[2].textContent = data.footer.note;
+  }
+  if (data.services) {
+    Object.keys(data.services).forEach(function(k) {
+      if (services[k] && data.services[k].items) {
+        services[k].title = data.services[k].title || services[k].title;
+        services[k].intro = data.services[k].intro || services[k].intro;
+        services[k].items = data.services[k].items;
+      }
+    });
+  }
+}
+function initPage() {
+  renderPricingTable('dev');
+  renderPricingTable('consult');
+  renderPricingTable('bi');
+  renderTabIntro('dev');
+  renderCalcServiceList();
+}
+
 // ========== 服务数据 ==========
 // 价格字段说明：origBase/origVar 为原价，6折价由代码计算 (orig * 0.6).toFixed(1)
 const services = {
@@ -835,10 +908,10 @@ function renderTabIntro(catKey) {
   }
 }
 
-renderPricingTable('dev');
-renderPricingTable('consult');
-renderPricingTable('bi');
-renderTabIntro('dev');
+loadSiteData(function(data) {
+  if (data) applyData(data);
+  initPage();
+});
 
 // ========== Tab切换 ==========
 document.querySelectorAll('.tab-btn').forEach(function(btn) {
@@ -1020,7 +1093,6 @@ document.querySelectorAll('.calc-mode-toggle button').forEach(function(btn) {
 });
 
 function scrollToContact() { document.getElementById('contact').scrollIntoView({ behavior: 'smooth' }); }
-renderCalcServiceList();
 
 // ========== 表单交互 ==========
 document.getElementById('formCategory').addEventListener('change', function(e) {
