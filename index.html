@@ -432,6 +432,7 @@ a { text-decoration: none; color: inherit; }
       <button class="tab-btn active" data-tab="dev">AI开发项目</button>
       <button class="tab-btn" data-tab="consult">咨询服务</button>
       <button class="tab-btn" data-tab="bi">BI报表服务</button>
+      <button class="tab-btn" data-tab="wecom">企业微信机器人配置服务</button>
     </div>
   </div>
   <div class="pricing-section">
@@ -463,6 +464,19 @@ a { text-decoration: none; color: inherit; }
         <tbody></tbody>
       </table>
       <table class="pricing-table" id="table-bi" style="display:none;">
+        <thead>
+          <tr>
+            <th>序号</th>
+            <th class="col-cat2">服务分类</th>
+            <th class="col-name">品项</th>
+            <th class="col-desc">标准规格 / 内容</th>
+            <th class="col-price">按次计费</th>
+            <th class="col-price">包月计费</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <table class="pricing-table" id="table-wecom" style="display:none;">
         <thead>
           <tr>
             <th>序号</th>
@@ -531,6 +545,7 @@ a { text-decoration: none; color: inherit; }
               <option value="dev">AI开发项目</option>
               <option value="consult">咨询服务</option>
               <option value="bi">BI报表服务</option>
+              <option value="wecom">企业微信机器人配置服务</option>
             </select>
           </div>
           <div class="form-group">
@@ -645,6 +660,7 @@ function initPage() {
   renderPricingTable('dev');
   renderPricingTable('consult');
   renderPricingTable('bi');
+  renderPricingTable('wecom');
   renderTabIntro('dev');
   renderCalcServiceList();
 }
@@ -800,6 +816,44 @@ const services = {
         monthly: { origBase: 0.3, origVar: 0.3, unit: "报表数" },
       }
     ]
+  },
+  wecom: {
+    title: "企业微信机器人配置服务",
+    intro: "为企业微信场景配置消息推送机器人，按机器人类型与发送专栏数计费。本服务仅支持一次性付费（按次计费），不提供包月订阅。配置完成后交付可直接使用的机器人与推送说明文档。",
+    items: [
+      {
+        id: "W1", mode: null, modeLabel: "", cat2: "富文本机器人", name: "富文本机器人配置",
+        desc: "配置企业微信富文本机器人，支持 Markdown、图文混排等消息格式推送。按发送专栏数计费，一次性付费。",
+        details: [
+          "确认推送场景与消息格式（Markdown / 图文 / 纯文本）",
+          "创建并配置企业微信机器人 Webhook 与权限",
+          "对接专栏数据源，配置推送字段映射",
+          "配置消息模板与推送频率策略",
+          "联调测试与异常告警配置",
+          "交付配置文档与使用说明"
+        ],
+        deliverables: ["企业微信机器人", "消息推送模板", "配置与使用文档"],
+        perUse: { origBase: 0.3, origVar: 0.2, unit: "发送专栏数" },
+        monthly: null,
+      },
+      {
+        id: "W2", mode: null, modeLabel: "", cat2: "Python机器人", name: "Python机器人配置",
+        desc: "配置 Python 驱动的自定义机器人，支持定时推送、数据抓取与复杂消息逻辑编排。按项目议价，需求评估后确定报价。",
+        details: [
+          "梳理推送需求与数据来源（接口 / 数据库 / 表格）",
+          "评估需求复杂度、数据源数量与调度逻辑",
+          "编写 Python 推送脚本与消息组装逻辑",
+          "配置企业微信机器人 Webhook 与安全策略",
+          "对接专栏数据源，设定调度策略（定时 / 事件触发）",
+          "异常重试、运行日志与告警配置",
+          "部署交付与脚本使用文档"
+        ],
+        deliverables: ["Python推送脚本", "企业微信机器人", "调度与告警配置", "部署文档"],
+        perUse: null,
+        monthly: null,
+        negotiable: true,
+      }
+    ]
   }
 };
 
@@ -825,16 +879,21 @@ function renderPricingTable(catKey) {
   var html = '';
   data.items.forEach(function(item, idx) {
     var freeBadge = '<span class="price-free">限时免费</span>';
-    var perUseText = item.free
+    var negotiableBadge = '<span class="price-na">按项目议价</span>';
+    var perUseText = item.negotiable
+      ? negotiableBadge
+      : (item.free
       ? freeBadge
       : (item.perUse
       ? buildDiscountedPrice(item.perUse) + '<span class="coin-unit"> coin</span><br><span class="discount-tag">限时6折</span> <span class="pay-tag">先签后付</span>'
-      : '<span class="price-na">—</span>');
-    var monthlyText = item.free
+      : '<span class="price-na">—</span>'));
+    var monthlyText = item.negotiable
+      ? negotiableBadge
+      : (item.free
       ? freeBadge
       : (item.monthly
       ? buildDiscountedPrice(item.monthly) + '<span class="coin-unit"> coin</span><br><span class="discount-tag">限时6折</span> <span class="pay-tag">先签后付</span>'
-      : '<span class="price-na">—</span>');
+      : '<span class="price-na">—</span>'));
     var modeClass = item.mode ? item.mode.toLowerCase() : '';
     var cat2Content = item.mode
       ? '<span class="mode-badge ' + modeClass + '">' + item.modeLabel + '</span><br><span class="cat2-tag">' + item.cat2 + '</span>'
@@ -856,8 +915,12 @@ function renderPricingTable(catKey) {
       html += '<div class="detail-block"><h4>支持交付物类型</h4><div class="deliverable-tags">';
       item.deliverables.forEach(function(d) { html += '<span class="deliverable-tag">' + d + '</span>'; });
       html += '</div>';
-      var unitLabel = item.perUse.unit || '数量';
-      html += '<p class="billing-note"><strong>计费说明：</strong>基础费覆盖需求分析与环境准备，变量费按实际' + unitLabel + '线性计费。交付物类型不影响单价，按统一' + unitLabel + '计费。所有服务先签后付，内部信用结算。' + (catKey === 'dev' ? '报价已含人工成本与AI token成本。' : '') + '</p>';
+      if (item.negotiable) {
+        html += '<p class="billing-note"><strong>计费说明：</strong>本项为按项目议价，无固定单价。报价根据需求复杂度、数据源数量、调度逻辑与交付范围评估后确定，请联系我们进行需求评估。所有服务先签后付，内部信用结算。</p>';
+      } else {
+        var unitLabel = (item.perUse && item.perUse.unit) || '数量';
+        html += '<p class="billing-note"><strong>计费说明：</strong>基础费覆盖需求分析与环境准备，变量费按实际' + unitLabel + '线性计费。交付物类型不影响单价，按统一' + unitLabel + '计费。所有服务先签后付，内部信用结算。' + (catKey === 'dev' ? '报价已含人工成本与AI token成本。' : '') + '</p>';
+      }
       html += '</div>';
     } else {
       html += '<div class="detail-block"><h4>计费说明</h4>';
@@ -952,12 +1015,13 @@ function renderCalcServiceList() {
   var container = document.getElementById('calcServiceList');
   var html = '';
   html += '<div class="calc-mode-hint">当前为' + (calcMode === 'perUse' ? '按次' : '包月') + '计费模式，每次仅能计算同一计费模式下的服务</div>';
-  ['dev', 'consult', 'bi'].forEach(function(catKey) {
+  ['dev', 'consult', 'bi', 'wecom'].forEach(function(catKey) {
     html += '<div style="margin-bottom:12px">';
     html += '<div style="font-size:13px;font-weight:700;color:var(--purple-dark);margin-bottom:6px;padding-left:4px;">' + services[catKey].title + '</div>';
     services[catKey].items.forEach(function(item, idx) {
       var priceData = calcMode === 'perUse' ? item.perUse : item.monthly;
-      var hasPrice = priceData !== null;
+      var isNegotiable = !!item.negotiable;
+      var hasPrice = priceData !== null && !isNegotiable;
       var isSelected = selectedServices[item.id];
       var isFree = item.free;
       var showQty = hasPrice && !isFree && (priceData.origVar > 0 || priceData.origBase > 0);
@@ -966,7 +1030,9 @@ function renderCalcServiceList() {
       html += '<input type="checkbox" id="calc-' + item.id + '" data-id="' + item.id + '" data-cat="' + catKey + '" data-idx="' + idx + '"' + (isSelected ? ' checked' : '') + (hasPrice ? '' : ' disabled') + '>';
       html += '<label for="calc-' + item.id + '"><strong>' + item.name + '</strong>';
       var priceLabel = '';
-      if (isFree) {
+      if (isNegotiable) {
+        priceLabel = '按项目议价';
+      } else if (isFree) {
         priceLabel = '限时免费';
       } else if (hasPrice) {
         var db = discountPrice(priceData.origBase);
@@ -1127,6 +1193,15 @@ document.getElementById('formCategory').addEventListener('change', function(e) {
       opt.textContent = item.modeLabel ? item.modeLabel + ' - ' + item.name : item.name;
       serviceSelect.appendChild(opt);
     });
+  } else if (cat === 'wecom') {
+    qtyLabel.textContent = '预估发送专栏数';
+    document.getElementById('formQty').placeholder = '如：3个专栏、5个专栏等';
+    services.wecom.items.forEach(function(item) {
+      var opt = document.createElement('option');
+      opt.value = item.id;
+      opt.textContent = item.id + ' - ' + item.name;
+      serviceSelect.appendChild(opt);
+    });
   } else {
     qtyLabel.textContent = '预估数量';
   }
@@ -1136,14 +1211,15 @@ document.getElementById('formService').addEventListener('change', function(e) {
   var serviceId = e.target.value;
   var modeSelect = document.getElementById('formMode');
   var found = null;
-  for (var i = 0; i < ['dev', 'consult', 'bi'].length; i++) {
-    var cat = ['dev', 'consult', 'bi'][i];
+  ['dev', 'consult', 'bi', 'wecom'].forEach(function(cat) {
     var item = services[cat].items.find(function(x) { return x.id === serviceId; });
-    if (item) { found = item; break; }
-  }
+    if (item) { found = item; return false; }
+  });
   modeSelect.innerHTML = '<option value="">请选择...</option>';
   if (found) {
-    if (found.free) {
+    if (found.negotiable) {
+      modeSelect.innerHTML += '<option value="negotiable">按项目议价</option>';
+    } else if (found.free) {
       modeSelect.innerHTML += '<option value="free">免费（限时）</option>';
     } else {
       if (found.perUse) modeSelect.innerHTML += '<option value="perUse">按次计费</option>';
@@ -1165,12 +1241,11 @@ document.getElementById('contactForm').addEventListener('submit', function(e) {
   }
   var catName = services[cat].title;
   var svcName = svc;
-  for (var i = 0; i < ['dev', 'consult', 'bi'].length; i++) {
-    var c = ['dev', 'consult', 'bi'][i];
+  ['dev', 'consult', 'bi', 'wecom'].forEach(function(c) {
     var item = services[c].items.find(function(x) { return x.id === svc; });
-    if (item) { svcName = item.name; break; }
-  }
-  var modeName = mode === 'perUse' ? '按次' : (mode === 'monthly' ? '包月' : '免费（限时）');
+    if (item) { svcName = item.name; return false; }
+  });
+  var modeName = mode === 'perUse' ? '按次' : (mode === 'monthly' ? '包月' : (mode === 'negotiable' ? '按项目议价' : '免费（限时）'));
   showToast('需求已提交！\n' + catName + ' / ' + svcName + ' / ' + modeName + ' / 数量' + qty + '\n我们将在4小时内响应', 'success');
   document.getElementById('contactForm').reset();
   document.getElementById('formService').innerHTML = '<option value="">请先选择大类...</option>';

@@ -377,7 +377,7 @@ function normalizeData() {
   if (!data.contact) data.contact = { title: '', desc: '', im_group: '' };
   if (!data.footer) data.footer = { line1: '', line2: '', note: '' };
   if (!data.services) data.services = {};
-  ['dev', 'consult', 'bi'].forEach(function(k) {
+  ['dev', 'consult', 'bi', 'wecom'].forEach(function(k) {
     if (!data.services[k]) data.services[k] = { title: '', intro: '', items: [] };
     if (!data.services[k].items) data.services[k].items = [];
     data.services[k].items.forEach(function(item) {
@@ -386,6 +386,7 @@ function normalizeData() {
       if (item.perUse === undefined) item.perUse = null;
       if (item.monthly === undefined) item.monthly = null;
       if (item.free === undefined) item.free = false;
+      if (item.negotiable === undefined) item.negotiable = false;
       if (item.mode === undefined) item.mode = null;
       if (item.modeLabel === undefined) item.modeLabel = '';
       if (item.cat2 === undefined) item.cat2 = '';
@@ -423,7 +424,8 @@ function initEmptyData() {
     services: {
       dev: { title: 'AI开发项目', intro: '', items: [] },
       consult: { title: '咨询服务', intro: '', items: [] },
-      bi: { title: 'BI报表服务', intro: '', items: [] }
+      bi: { title: 'BI报表服务', intro: '', items: [] },
+      wecom: { title: '企业微信机器人配置服务', intro: '', items: [] }
     }
   };
   renderAll();
@@ -550,7 +552,7 @@ function renderServicesSection() {
   html += '<p class="section-hint">三个类别的服务项目，支持新增、删除、上下排序</p>';
   // Tab切换
   html += '<div class="service-tabs">';
-  ['dev', 'consult', 'bi'].forEach(function(k) {
+  ['dev', 'consult', 'bi', 'wecom'].forEach(function(k) {
     var active = currentServiceTab === k ? ' active' : '';
     html += '<button class="service-tab' + active + '" onclick="switchServiceTab(\'' + k + '\')">' + esc(data.services[k].title || k) + '</button>';
   });
@@ -623,6 +625,12 @@ function renderItemCard(catKey, idx, item) {
   html += '<div class="checkbox-group">';
   html += '<input type="checkbox" id="free-' + catKey + '-' + idx + '"' + (item.free ? ' checked' : '') + ' onchange="data.services.' + catKey + '.items[' + idx + '].free=this.checked">';
   html += '<label for="free-' + catKey + '-' + idx + '">是否免费 (free)</label>';
+  html += '</div>';
+
+  // 按项目议价
+  html += '<div class="checkbox-group">';
+  html += '<input type="checkbox" id="negotiable-' + catKey + '-' + idx + '"' + (item.negotiable ? ' checked' : '') + ' onchange="data.services.' + catKey + '.items[' + idx + '].negotiable=this.checked">';
+  html += '<label for="negotiable-' + catKey + '-' + idx + '">按项目议价 (negotiable，勾选后价格列显示“按项目议价”且不参与计算器)</label>';
   html += '</div>';
 
   html += '</div>';
@@ -765,12 +773,13 @@ function exportJson() {
   // 深拷贝并清理
   var exportData = JSON.parse(JSON.stringify(data));
   // 确保mode为空字符串时导出null
-  ['dev', 'consult', 'bi'].forEach(function(k) {
+  ['dev', 'consult', 'bi', 'wecom'].forEach(function(k) {
     if (exportData.services[k] && exportData.services[k].items) {
       exportData.services[k].items.forEach(function(item) {
         if (item.mode === '') item.mode = null;
         if (item.modeLabel === undefined) item.modeLabel = '';
         if (item.free === undefined) item.free = false;
+        if (item.negotiable === undefined) item.negotiable = false;
       });
     }
   });
