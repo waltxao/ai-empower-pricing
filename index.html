@@ -164,7 +164,7 @@ a { text-decoration: none; color: inherit; }
     linear-gradient(90deg, rgba(129,140,248,0.09) 1px, transparent 1px);
   background-size: auto, auto, 44px 44px, 44px 44px;
   color: var(--night-text);
-  clip-path: circle(480px at -9999px -9999px);
+  clip-path: circle(400px at -9999px -9999px);
 }
 .hero-world-dark .hero-inner { width: 100%; }
 .hero-world-dark .hero-kicker { color: #C7D2FE; font-weight: 500; }
@@ -177,12 +177,14 @@ a { text-decoration: none; color: inherit; }
 .hero-world-dark .hr-desc { color: var(--night-text-2); }
 .hero-world-dark .hc-dot { background: rgba(255,255,255,0.25); }
 .hero-world-dark .hc-dot.active { background: #A5B4FC; }
-/* 代码瀑布画布：绿雨（光圈内）/ 灰雨（光圈外），画于暗层文字之上（Matrix 质感） */
+/* 代码瀑布画布：仅暗区（光圈内）显示，夜色之上、文字之下；竖直代码流下落渐隐 */
 .code-rain {
-  position: absolute; inset: 0; z-index: 4;
+  position: absolute; inset: 0; z-index: 1;
   pointer-events: none;
 }
-.hero-inner { max-width: 1160px; margin: 0 auto; position: relative; z-index: 2; width: 100%; }
+/* hero-inner 不设 z-index（避免形成层叠上下文），让 .hv-icon 可独立提到 z5 凌驾暗层弧线 */
+.hero-inner { max-width: 1160px; margin: 0 auto; position: relative; width: 100%; }
+.hero-world-dark .hero-inner { width: 100%; position: relative; z-index: 2; }
 .hero-head {
   display: grid; grid-template-columns: 1.15fr 0.85fr; gap: var(--sp-10);
   align-items: center;
@@ -228,7 +230,8 @@ a { text-decoration: none; color: inherit; }
   min-height: 560px;
 }
 .hv-icon {
-  position: absolute; width: 500px; height: 500px; object-fit: contain;
+  position: absolute; width: min(500px, 38vw); height: min(500px, 38vw); object-fit: contain;
+  z-index: 5; /* 凌驾暗层弧线：图标任何情况下全亮 */
   opacity: 0; transform: translateY(22px) scale(0.86);
   transition: opacity 0.55s var(--ease), transform 0.55s var(--ease);
   filter: drop-shadow(0 18px 32px rgba(0,0,0,0.35));
@@ -256,8 +259,8 @@ a { text-decoration: none; color: inherit; }
   .hero { padding: var(--sp-8) 20px; min-height: 0; }
   .hero-head { grid-template-columns: 1fr; gap: var(--sp-8); }
   .hr-big { font-size: 1.9rem; }
-  .hero-visual { min-height: 440px; }
-  .hv-icon { width: 400px; height: 400px; }
+  .hero-visual { min-height: min(440px, 80vw); }
+  .hv-icon { width: min(400px, 72vw); height: min(400px, 72vw); }
 }
 
 /* 服务流程 */
@@ -767,9 +770,9 @@ a { text-decoration: none; color: inherit; }
 
 <!-- 页眉 -->
 <section class="hero" id="hero">
-  <canvas class="code-rain" id="codeRain" aria-hidden="true"></canvas>
   <!-- 暗色世界：完整内容副本，只在光圈内可见（亮层同位置内容在圈内被 mask 隐藏，两层重叠形成劈色） -->
   <div class="hero-world-dark" id="heroDark" aria-hidden="true">
+    <canvas class="code-rain" id="rainGreen" aria-hidden="true"></canvas>
     <div class="hero-inner">
       <div class="hero-head">
         <div class="hero-copy">
@@ -1207,74 +1210,114 @@ function initHeroShowcase() {
   play();
 }
 
-// 代码雨背景（Hero 专属，setInterval 驱动——rAF 在部分内嵌预览环境不执行）
+// 代码瀑布（Hero 专属，setInterval 驱动）：黑客帝国式密集瀑布，仅暗区显示
+// - 每颗雨滴 = 一整行页面源码，文字旋转 90° 沿列竖直下落，头部亮、尾部渐隐
+// - 前后景深：近流粗/亮/快，远流细/淡/慢；到底立即回流，瀑布永不断流
 function initCodeRain() {
-  var canvas = document.getElementById('codeRain');
+  var canvas = document.getElementById('rainGreen');
   var hero = document.getElementById('hero');
   if (!canvas || !hero || !canvas.getContext) return;
   var ctx = canvas.getContext('2d');
   if (!ctx) return;
-  var CH = '01</>{};=+*#$アイウエオカキクケコ';
-  var colW = 14, rowH = 16, cols = 0, drops = [], speeds = [], trails = [];
+  // 页面自身源码（报价/轮播/雨引擎真实逻辑摘录），每行即一颗雨滴
+  var SRC = [
+    'function show(n) {',
+    '  n = ((n % len) + len) % len;',
+    '  sets.forEach(function (s) {',
+    '    sync(s, n);',
+    '});}',
+    'const RATE = { dev: 0.6, bi: 0.6 };',
+    'function price(qty, unit) {',
+    '  return qty * unit; // coin',
+    '}',
+    'const R = 480; // spotlight',
+    'dark.style.clipPath = "cir',
+    'cle(" + R + "px at " + cx;',
+    'drops[i] += speeds[i];',
+    'if (head > H + 30) {',
+    '  reset(i); // waterfall',
+    '}',
+    'render(slide, icons, dots);',
+    'play(); // 5s auto',
+    'save("v2.4.0");',
+    'export default hero;',
+    'if (visible) start();',
+    'else pause();',
+    'setInterval(frame, 36);',
+    'ctx.rotate(Math.PI / 2);',
+    'alpha = 1 - k / trail;',
+    'head += speed; // flow',
+    'grid(44px); night(#16162B);',
+    'coin = qty * unit; // 计费',
+    'discount = 0.6; // 统一六折',
+    'settle: 签约后付, 零垫资'
+  ];
+  var CODE = SRC.join('');                            // 连续源码文本：滚动内容从中循环取字符
+  var colW = 10, W = 0, H = 0;
+  var cols = 0, lines = [], xs = [], heads = [], lens = [], speeds = [], fonts = [], dims = [];
+  var cursors = [], scrolls = [], charWs = [];
   function resize() {
     var dpr = Math.min(window.devicePixelRatio || 1, 1.5);
-    canvas.width = hero.clientWidth * dpr;
-    canvas.height = hero.clientHeight * dpr;
-    canvas.style.width = hero.clientWidth + 'px';
-    canvas.style.height = hero.clientHeight + 'px';
-    cols = Math.ceil(hero.clientWidth / colW);
-    drops = []; speeds = []; trails = [];
-    for (var i = 0; i < cols; i++) {
-      drops.push(Math.random() * 50 - 50);
-      speeds.push(0.3 + Math.random() * 0.55);
-      trails.push(8 + Math.floor(Math.random() * 9));
-    }
+    W = hero.clientWidth; H = hero.clientHeight;
+    canvas.width = W * dpr; canvas.height = H * dpr;
+    canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.font = '12px Consolas, monospace';
+    cols = Math.ceil(W / colW);
+    lines = []; xs = []; heads = []; lens = []; speeds = []; fonts = []; dims = [];
+    cursors = []; scrolls = []; charWs = [];
+    for (var i = 0; i < cols; i++) spawn(i, true);
+  }
+  function spawn(i, scatter) {
+    var near = Math.random() < 0.45; // 45% 近景，55% 远景
+    dims[i] = near ? 1 : 0;
+    fonts[i] = near ? 13 : 10;
+    speeds[i] = near ? 3 + Math.random() * 2.5 : 1.1 + Math.random() * 0.9;
+    lines[i] = SRC[Math.floor(Math.random() * SRC.length)];
+    xs[i] = i * colW + 2 + Math.random() * 4;
+    lens[i] = lines[i].length * fonts[i] * 0.62;      // 旋转后行的纵向长度
+    charWs[i] = fonts[i] * 0.62;                      // 等宽字符宽
+    cursors[i] = Math.random() * 1000;                // 内容滚动游标：首字母不断向前推
+    scrolls[i] = near ? 0.25 + Math.random() * 0.3 : 0.12 + Math.random() * 0.15; // 字符/帧
+    heads[i] = scatter ? Math.random() * (H + 300) - 300 : -lens[i] - Math.random() * 200;
   }
   var timer = null;
-  window.__rain = { drops: drops, cols: function() { return cols; }, frames: 0 };
+  window.__rain = { frames: 0, get cols() { return cols; }, stop: pause, start: start };
   function frame() {
     window.__rain.frames++;
-    var W = hero.clientWidth, H = hero.clientHeight;
-    var sp = window.__spot || { x: -9999, y: -9999, r: 480 };
     ctx.clearRect(0, 0, W, H);
-    // 圈内绿雨（clip）+ 圈外灰雨；夜色底与辉光网格由 .hero-world-dark 的 CSS 背景承担
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(sp.x, sp.y, sp.r, 0, Math.PI * 2);
-    ctx.clip();
-    drawRain(sp, true);
-    ctx.restore();
-    drawRain(sp, false);
-  }
-  function drawRain(sp, inside) {
-    var H = hero.clientHeight;
-    var r2 = sp.r * sp.r;
     for (var i = 0; i < cols; i++) {
-      var head = drops[i], tl = trails[i];
-      var gx = i * colW + 7;
-      for (var k = 0; k < tl; k++) {
-        var gy = (head - k) * rowH;
-        if (gy < -rowH || gy > H + rowH) continue;
-        var dx = gx - sp.x, dy = gy - sp.y;
-        if ((dx * dx + dy * dy < r2) !== inside) continue;
-        var a = k === 0 ? 0.95 : Math.max(0.09, 0.55 - k * 0.05);
-        if (inside) {
-          ctx.fillStyle = k === 0 ? 'rgba(200,255,190,' + a + ')' : 'rgba(74,222,128,' + (a * 0.85).toFixed(3) + ')';
-        } else {
-          ctx.fillStyle = k === 0 ? 'rgba(71,84,103,' + a + ')' : 'rgba(148,163,184,' + (a * 0.7).toFixed(3) + ')';
-        }
-        ctx.fillText(CH[Math.floor(Math.random() * CH.length)], gx - 7, gy);
+      var font = fonts[i] + 'px Consolas, monospace';
+      ctx.font = font;
+      ctx.save();
+      ctx.translate(xs[i], heads[i]);                 // 原点 = 雨滴底端（阅读起点）
+      ctx.rotate(-Math.PI / 2);                       // 旋转 -90°：文字从下往上读
+      // 渐变沿文字延伸方向（局部 +x = 屏幕向上）：底(0)亮 → 顶(lens)透明
+      var g = ctx.createLinearGradient(0, 0, lens[i], 0);
+      var am = dims[i] ? 1 : 0.4;                     // 远景整体淡化
+      var cc = dims[i] ? '134,239,172' : '165,180,252';
+      var hc = dims[i] ? '220,255,225' : '199,210,254';
+      g.addColorStop(0, 'rgba(' + hc + ',' + (0.95 * am).toFixed(3) + ')');
+      g.addColorStop(0.45, 'rgba(' + cc + ',' + (0.38 * am).toFixed(3) + ')');
+      g.addColorStop(1, 'rgba(' + cc + ',' + (0.02 * am).toFixed(3) + ')');
+      ctx.fillStyle = g;
+      // 双层运动：整滴下落(外层 translate) + 内容沿列向上滚动(游标递增)
+      // 首字母(下端阅读起点)不断推出新字符，旧行向上推移，滚完当前行接续源码下一段
+      var N = Math.min(CODE.length, Math.ceil(lens[i] / charWs[i]) + 2);
+      var baseI = Math.floor(cursors[i]);
+      var frac = cursors[i] - baseI;
+      for (var j = -1; j < N; j++) {
+        var chx = (j + frac) * charWs[i];             // frac 递增 → 字符向上推移
+        if (chx < -charWs[i] || chx > lens[i] + charWs[i]) continue;
+        var ci = ((baseI - j) % CODE.length + CODE.length) % CODE.length;
+        ctx.fillText(CODE.charAt(ci), chx, 0);
       }
-      drops[i] += speeds[i];
-      if ((head - tl) * rowH > H && Math.random() > 0.94) {
-        drops[i] = -Math.random() * 22;
-        trails[i] = 8 + Math.floor(Math.random() * 9);
-      }
+      ctx.restore();
+      heads[i] += speeds[i];
+      cursors[i] += scrolls[i];                       // 内容滚动：底端出新字符，尾渐隐
+      if (heads[i] - lens[i] > H + 40) spawn(i, false); // 整滴出屏：换一行代码，回到顶部
     }
   }
-  function start() { if (timer === null) timer = setInterval(frame, 40); }
+  function start() { if (timer === null) timer = setInterval(frame, 36); }
   function pause() { if (timer !== null) { clearInterval(timer); timer = null; } }
   resize();
   start();
@@ -1297,7 +1340,7 @@ function initHeroSpotlight() {
   var hero = document.getElementById('hero');
   var dark = document.getElementById('heroDark');
   if (!hero || !dark) return;
-  var R = 480;
+  var R = 400; // 光圈半径：右缘止步于文字区与图标区之间(约760px)，弧线不切过图标
   var mx = null, my = 0, cx = -1, cy = -1, t0 = performance.now();
   window.__spot = { x: -9999, y: -9999, r: R };
   hero.addEventListener('mousemove', function(e) {
@@ -1313,7 +1356,7 @@ function initHeroSpotlight() {
       // 空闲时停在左侧轮播文字区（轻微呼吸位移），暗色世界始终覆盖内容，不产生"空页"
       var t = (performance.now() - t0) / 1000;
       var w = hero.clientWidth || 1200, h = hero.clientHeight || 500;
-      tx = w * 0.28 + Math.cos(t * 0.4) * 14;
+      tx = w * 0.25 + Math.cos(t * 0.4) * 14;
       ty = h * 0.5 + Math.sin(t * 0.5) * 12;
     }
     if (cx < 0) { cx = tx; cy = ty; }
