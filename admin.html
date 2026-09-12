@@ -6,21 +6,27 @@
 <title>后台管理 - 智能化赋能服务报价</title>
 <style>
 :root {
-  --black: #000000;
+  --brand: #4F46E5;
+  --brand-dark: #3730A3;
+  --brand-soft: #EEF2FF;
+  --brand-line: #C7D2FE;
+  --grad-brand: linear-gradient(120deg, #6366F1 0%, #4338CA 100%);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --black: #1A1A1A;
   --dark: #1A1A1A;
-  --gray-dark: #333333;
-  --gray: #7F8C8D;
-  --gray-light: #E0E0E0;
-  --bg-gray: #F8F9FA;
+  --gray-dark: #374151;
+  --gray: #6B7280;
+  --gray-light: #E8E6E1;
+  --bg-gray: #FAFAF9;
   --bg-white: #FFFFFF;
-  --yellow: #FFCC00;
-  --yellow-dark: #E6B800;
-  --red: #E74C3C;
+  --yellow: #4F46E5;
+  --yellow-dark: #3730A3;
+  --red: #DC2626;
   --text-dark: #1A1A1A;
-  --text-gray: #7F8C8D;
+  --text-gray: #6B7280;
   --radius: 8px;
-  --radius-lg: 16px;
-  --font: 'Noto Sans CJK SC', 'Microsoft YaHei', 'PingFang SC', sans-serif;
+  --radius-lg: 14px;
+  --font: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", "Segoe UI", Roboto, sans-serif;
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { font-family: var(--font); background: var(--bg-gray); color: var(--text-dark); font-size: 14px; line-height: 1.6; }
@@ -29,53 +35,54 @@ a { text-decoration: none; color: inherit; }
 /* ===== 登录页 ===== */
 #loginScreen {
   position: fixed; inset: 0;
-  background: linear-gradient(135deg, #000000 0%, #1A1A1A 50%, #000000 100%);
+  background: #111827;
   display: flex; align-items: center; justify-content: center; z-index: 999;
 }
 #loginScreen::before {
-  content: ''; position: absolute; top: -30%; right: -10%;
-  width: 500px; height: 500px;
-  background: radial-gradient(circle, rgba(255,204,0,0.12), transparent 70%);
+  content: ''; position: absolute; top: -30%; left: 50%; transform: translateX(-50%);
+  width: 700px; height: 620px;
+  background: radial-gradient(circle, rgba(79,70,229,0.22), transparent 68%);
   border-radius: 50%;
 }
 .login-box {
   background: #fff; border-radius: var(--radius-lg); padding: 40px;
-  width: 380px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  width: 380px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.35);
   position: relative; z-index: 1;
 }
-.login-box h1 { font-size: 24px; font-weight: 700; margin-bottom: 6px; }
+.login-box h1 { font-size: 24px; font-weight: 600; margin-bottom: 6px; letter-spacing: -0.01em; }
 .login-box .sub { color: var(--text-gray); font-size: 13px; margin-bottom: 24px; }
 .login-box input {
-  width: 100%; padding: 12px 16px; border: 2px solid var(--gray-light);
+  width: 100%; padding: 12px 16px; border: 1px solid var(--gray-light);
   border-radius: var(--radius); font-size: 15px; font-family: var(--font);
-  margin-bottom: 12px; transition: border-color 0.2s;
+  margin-bottom: 12px; transition: all 0.15s ease; background: #fff;
 }
-.login-box input:focus { outline: none; border-color: var(--black); }
+.login-box input:focus { outline: none; border-color: var(--brand); box-shadow: 0 0 0 3px rgba(79,70,229,0.10); }
 .login-box .login-btn {
-  width: 100%; padding: 12px; background: var(--black); color: #fff;
+  width: 100%; padding: 12px; background: var(--grad-brand); background-size: 170% 170%; background-position: 0% 50%; color: #fff;
   border: none; border-radius: var(--radius); font-size: 15px; font-weight: 600;
-  cursor: pointer; font-family: var(--font); transition: background 0.2s;
+  cursor: pointer; font-family: var(--font); transition: background-position 0.5s var(--ease-out), box-shadow 0.2s ease;
 }
-.login-box .login-btn:hover { background: var(--gray-dark); }
+.login-box .login-btn:hover { background-position: 100% 50%; box-shadow: 0 8px 24px rgba(79,70,229,0.32); }
 .login-hint { color: var(--red); font-size: 13px; margin-top: 12px; min-height: 20px; }
 .login-back { display: block; margin-top: 16px; font-size: 13px; color: var(--text-gray); }
-.login-back:hover { color: var(--yellow-dark); }
+.login-back:hover { color: var(--brand); }
 
 /* ===== 顶部操作栏 ===== */
 .topbar {
-  position: fixed; top: 0; left: 0; right: 0; height: 56px;
-  background: rgba(0,0,0,0.97); backdrop-filter: blur(10px);
+  position: fixed; top: 0; left: 0; right: 0; height: 60px;
+  background: rgba(255,255,255,0.9); backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   display: flex; align-items: center; justify-content: space-between;
-  padding: 0 24px; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+  padding: 0 24px; z-index: 100; border-bottom: 1px solid var(--gray-light);
 }
-.topbar-logo { color: #fff; font-size: 16px; font-weight: 700; letter-spacing: 0.5px; }
-.topbar-logo span { color: var(--yellow); }
+.topbar-logo { color: var(--black); font-size: 16px; font-weight: 600; letter-spacing: 0.3px; }
+.topbar-logo span { color: var(--brand); }
 .topbar-right { display: flex; gap: 10px; align-items: center; }
 .topbar-right .preview-link {
-  color: rgba(255,255,255,0.6); font-size: 13px; padding: 6px 12px;
-  border-radius: 6px; transition: all 0.2s;
+  color: var(--gray); font-size: 13px; padding: 6px 12px;
+  border-radius: 6px; transition: all 0.15s ease;
 }
-.topbar-right .preview-link:hover { color: var(--yellow); background: rgba(255,255,255,0.1); }
+.topbar-right .preview-link:hover { color: var(--brand); background: var(--brand-soft); }
 
 /* ===== 按钮 ===== */
 .btn {
@@ -85,10 +92,10 @@ a { text-decoration: none; color: inherit; }
 }
 .btn-black { background: var(--black); color: #fff; }
 .btn-black:hover { background: var(--gray-dark); }
-.btn-yellow { background: var(--yellow); color: #000; }
-.btn-yellow:hover { background: var(--yellow-dark); }
-.btn-outline { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,0.3); }
-.btn-outline:hover { border-color: var(--yellow); color: var(--yellow); }
+.btn-yellow { background: var(--grad-brand); background-size: 170% 170%; background-position: 0% 50%; color: #fff; transition: background-position 0.5s var(--ease-out), box-shadow 0.2s ease; }
+.btn-yellow:hover { background-position: 100% 50%; box-shadow: 0 6px 18px rgba(79,70,229,0.28); }
+.btn-outline { background: transparent; color: var(--gray-dark); border: 1px solid var(--gray-light); }
+.btn-outline:hover { border-color: var(--brand); color: var(--brand); }
 .btn-outline-dark { background: transparent; color: var(--gray-dark); border: 1px solid var(--gray-light); }
 .btn-outline-dark:hover { border-color: var(--black); color: var(--black); }
 .btn-sm { padding: 5px 12px; font-size: 12px; }
@@ -122,8 +129,8 @@ a { text-decoration: none; color: inherit; }
 }
 .nav-item:hover { background: var(--bg-gray); }
 .nav-item.active {
-  border-left-color: var(--yellow); background: #FFF8E1;
-  color: var(--black); font-weight: 600;
+  border-left-color: var(--brand); background: var(--brand-soft);
+  color: var(--brand); font-weight: 600;
 }
 .content { flex: 1; padding: 24px 32px; max-width: 1000px; }
 
@@ -133,8 +140,11 @@ a { text-decoration: none; color: inherit; }
   margin-bottom: 20px; box-shadow: 0 1px 6px rgba(0,0,0,0.05);
 }
 .edit-section h2 {
-  font-size: 18px; font-weight: 700; margin-bottom: 4px;
-  padding-left: 14px; border-left: 4px solid var(--yellow);
+  position: relative; font-size: 18px; font-weight: 600; margin-bottom: 4px; padding-left: 15px;
+}
+.edit-section h2::before {
+  content: ''; position: absolute; left: 0; top: 4px; bottom: 4px; width: 3px;
+  background: var(--grad-brand); border-radius: 2px;
 }
 .edit-section .section-hint { font-size: 12px; color: var(--text-gray); margin-bottom: 16px; padding-left: 18px; }
 .edit-section hr { border: none; border-top: 1px solid var(--gray-light); margin: 16px 0; }
@@ -157,6 +167,7 @@ a { text-decoration: none; color: inherit; }
 .field-group textarea:focus,
 .field-group select:focus { outline: none; border-color: var(--black); background: #fff; }
 .field-group textarea { resize: vertical; min-height: 64px; }
+.field-hint { font-size: 12px; color: var(--text-gray); line-height: 1.6; margin: -4px 0 14px; }
 
 .field-inline { display: flex; align-items: center; gap: 8px; }
 .field-inline label { font-size: 12px; color: var(--text-gray); white-space: nowrap; min-width: 50px; }
@@ -194,7 +205,7 @@ a { text-decoration: none; color: inherit; }
   margin-bottom: -2px; font-family: var(--font); border-radius: 6px 6px 0 0; transition: all 0.2s;
 }
 .service-tab:hover { background: var(--bg-gray); color: var(--gray-dark); }
-.service-tab.active { color: #fff; background: var(--black); border-bottom-color: var(--yellow); }
+.service-tab.active { color: var(--brand); background: transparent; border-bottom-color: var(--brand); font-weight: 600; }
 
 /* ===== 服务项目卡片 ===== */
 .item-card {
@@ -203,8 +214,8 @@ a { text-decoration: none; color: inherit; }
 }
 .item-card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
 .item-card-header .item-id {
-  font-size: 14px; font-weight: 700; color: var(--black);
-  background: var(--yellow); padding: 2px 10px; border-radius: 12px;
+  font-size: 13px; font-weight: 600; color: #fff;
+  background: var(--grad-brand); padding: 2px 10px; border-radius: 999px;
 }
 .item-card-header .item-name-display { font-size: 14px; font-weight: 600; }
 .item-card-actions { display: flex; gap: 6px; margin-left: auto; }
@@ -236,14 +247,16 @@ a { text-decoration: none; color: inherit; }
 
 /* ===== Toast ===== */
 .toast {
-  position: fixed; top: 72px; left: 50%;
-  transform: translateX(-50%) translateY(-120px);
-  background: var(--yellow); color: #000; padding: 12px 24px;
-  border-radius: var(--radius); font-size: 14px; font-weight: 600;
+  position: fixed; top: 76px; left: 50%;
+  transform: translateX(-50%) translateY(-160px);
+  opacity: 0; visibility: hidden; pointer-events: none;
+  background: var(--black); color: #fff; padding: 12px 24px;
+  border-radius: var(--radius); font-size: 14px; font-weight: 500;
   box-shadow: 0 8px 30px rgba(0,0,0,0.2); z-index: 1000;
-  transition: transform 0.3s ease; white-space: pre-line;
+  transition: transform 0.35s var(--ease-out), opacity 0.25s ease, visibility 0.35s ease;
+  white-space: pre-line;
 }
-.toast.show { transform: translateX(-50%) translateY(0); }
+.toast.show { transform: translateX(-50%) translateY(0); opacity: 1; visibility: visible; }
 .toast.error { background: var(--red); color: #fff; }
 
 /* ===== 加载错误 ===== */
@@ -375,7 +388,7 @@ function normalizeData() {
   if (!data.pricing) data.pricing = { title: '', desc: '' };
   if (!data.calculator) data.calculator = { title: '', desc: '' };
   if (!data.contact) data.contact = { title: '', desc: '', im_group: '' };
-  if (!data.footer) data.footer = { line1: '', line2: '', note: '' };
+  if (!data.footer) data.footer = { meta: '' };
   if (!data.services) data.services = {};
   ['dev', 'consult', 'bi', 'wecom'].forEach(function(k) {
     if (!data.services[k]) data.services[k] = { title: '', intro: '', items: [] };
@@ -420,7 +433,7 @@ function initEmptyData() {
     pricing: { title: '', desc: '' },
     calculator: { title: '', desc: '' },
     contact: { title: '', desc: '', im_group: '' },
-    footer: { line1: '', line2: '', note: '' },
+    footer: { meta: '' },
     services: {
       dev: { title: 'AI开发项目', intro: '', items: [] },
       consult: { title: '咨询服务', intro: '', items: [] },
@@ -541,6 +554,7 @@ function renderPricingSection() {
   html += '<p class="section-hint">报价表的标题与描述文字</p>';
   html += '<div class="field-group"><label>区域标题</label><input type="text" value="' + esc(p.title) + '" oninput="data.pricing.title=this.value"></div>';
   html += '<div class="field-group"><label>区域描述</label><textarea oninput="data.pricing.desc=this.value">' + esc(p.desc) + '</textarea></div>';
+  html += '<div class="field-group"><label>价格备注（表格上方醒目提示）</label><textarea oninput="data.pricing.note=this.value">' + esc(p.note || '') + '</textarea></div>';
   html += '</section>';
   return html;
 }
@@ -761,9 +775,8 @@ function renderFooterSection() {
   var html = '<section id="sec-footer" class="edit-section">';
   html += '<h2>底部Footer</h2>';
   html += '<p class="section-hint">底部三行文字内容</p>';
-  html += '<div class="field-group"><label>第一行 (line1)</label><input type="text" value="' + esc(f.line1) + '" oninput="data.footer.line1=this.value"></div>';
-  html += '<div class="field-group"><label>第二行 (line2)</label><input type="text" value="' + esc(f.line2) + '" oninput="data.footer.line2=this.value"></div>';
-  html += '<div class="field-group"><label>备注 (note)</label><textarea oninput="data.footer.note=this.value">' + esc(f.note) + '</textarea></div>';
+  html += '<div class="field-group"><label>页脚署名行 (meta)</label><input type="text" value="' + esc(f.meta) + '" oninput="data.footer.meta=this.value"></div>';
+  html += '<p class="field-hint">页脚的计价/折扣/口径四项规则写在 index.html 里，不在此处编辑。</p>';
   html += '</section>';
   return html;
 }
